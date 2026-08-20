@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics · 16 topics · review + examples + problems</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #f1f5f9;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #0f172a;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
+            padding: 2rem 2.5rem;
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e9edf2;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        h1 small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #475569;
+            margin-left: 0.5rem;
+        }
+        .selector-area {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            background: #f8fafc;
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+        }
+        .selector-area label {
+            font-weight: 500;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        select {
+            padding: 0.6rem 2rem 0.6rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0f172a;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 1.2rem;
+            min-width: 200px;
+        }
+        select:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        .password-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+        .password-group input {
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            width: 180px;
+        }
+        .password-group input:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        .btn {
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .btn:hover { background: #0f172a; transform: scale(0.98); }
+        .btn:active { background: #020617; }
+        .status-msg {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .status-msg.error { background: #fee2e2; color: #991b1b; }
+        .status-msg.success { background: #dcfce7; color: #14532d; }
+        .review-box {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0 2rem 0;
+            border-left: 6px solid #3b82f6;
+            line-height: 1.7;
+            color: #1e293b;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .review-box h3 {
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .review-box h3 span {
+            background: #dbeafe;
+            color: #1e4a8b;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.8rem;
+            border-radius: 24px;
+            letter-spacing: 0.3px;
+        }
+        .review-box p { margin-top: 0.3rem; color: #334155; }
+        .review-box .example {
+            background: #eef2f6;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            margin: 0.5rem 0 0.2rem 0;
+            font-size: 0.92rem;
+            border-left: 3px solid #3b82f6;
+        }
+        .review-box .example strong { color: #0f172a; }
+        .lock-icon { font-size: 1.2rem; }
+        .problems-section { margin-top: 1.8rem; }
+        .problems-section h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .problems-section h2 span {
+            background: #e2e8f0;
+            padding: 0.1rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #1e293b;
+        }
+        .problem-item {
+            background: white;
+            border-radius: 16px;
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 0.7rem;
+            border: 1px solid #e9edf2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            transition: 0.1s;
+        }
+        .problem-item:hover { border-color: #b9c7da; }
+        .problem-num {
+            font-weight: 600;
+            color: #3b82f6;
+            background: #eff6ff;
+            border-radius: 40px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+        .problem-text { flex: 1; line-height: 1.5; }
+        .badge-mc {
+            background: #dbeafe;
+            color: #1e4a8b;
+            font-size: 0.6rem;
+            font-weight: 600;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            margin-left: 0.4rem;
+            text-transform: uppercase;
+        }
+        .empty-state {
+            color: #94a3b8;
+            text-align: center;
+            padding: 2.5rem 0;
+            font-style: italic;
+        }
+        .apps-script-box {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .apps-script-box .comment { color: #94a3b8; }
+        .apps-script-box .keyword { color: #60a5fa; }
+        .apps-script-box .string { color: #34d399; }
+        hr {
+            border: 0;
+            border-top: 1px solid #e2e8f0;
+            margin: 1.8rem 0 0.5rem;
+        }
+        .footer {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: right;
+            margin-top: 0.8rem;
+        }
+        @media (max-width: 700px) {
+            .container { padding: 1.2rem; }
+            .selector-area { border-radius: 30px; flex-direction: column; align-items: stretch; }
+            .password-group { margin-left: 0; width: 100%; }
+            .password-group input { flex: 1; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📊 Statistics · 16 topics <small>review + examples + problems</small></h1>
+
+    <div class="selector-area">
+        <label for="topicSelect">📋 Topic</label>
+        <select id="topicSelect"></select>
+
+        <div class="password-group">
+            <input type="password" id="passwordInput" placeholder="Enter password" />
+            <button class="btn" id="unlockBtn">🔓 Unlock</button>
+            <span id="statusMsg" class="status-msg">🔒 locked</span>
+        </div>
+    </div>
+
+    <!-- Review panel -->
+    <div id="reviewPanel" class="review-box">
+        <h3>📘 Review <span id="topicBadge">topic 1</span> <span class="lock-icon" id="lockIcon">🔒</span></h3>
+        <div id="reviewContent">Select a topic, enter the password (<strong>stat353yeah!</strong>), and click Unlock to see the review with examples and problems.</div>
+    </div>
+
+    <!-- Problems -->
+    <div class="problems-section">
+        <h2>📝 Problems <span id="problemCount">0</span> <span id="lockStatusBadge" style="font-size:0.7rem;background:#e2e8f0;padding:0.1rem 0.7rem;border-radius:20px;">locked</span></h2>
+        <div id="problemsContainer">
+            <div class="empty-state">🔒 Unlock to view problems</div>
+        </div>
+    </div>
+
+    <!-- Google Apps Script -->
+    <div class="apps-script-box">
+        <span class="comment">// Google Apps Script — deploy as web app</span>
+        <span class="comment">// Sheet name: "Passwords" with columns: TopicIndex (1-16), Password</span>
+        <span style="color: #f472b6;">function</span> <span style="color: #60a5fa;">doGet</span>(e) {
+          <span style="color: #f472b6;">const</span> sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(<span style="color: #34d399;">"Passwords"</span>);
+          <span style="color: #f472b6;">if</span> (!sheet) <span style="color: #f472b6;">return</span> ContentService.createTextOutput(<span style="color: #34d399;">"Sheet not found"</span>);
+          <span style="color: #f472b6;">const</span> data = sheet.getDataRange().getValues();
+          <span style="color: #f472b6;">const</span> result = {};
+          <span style="color: #f472b6;">for</span> (<span style="color: #f472b6;">let</span> i = 1; i < data.length; i++) {
+            <span style="color: #f472b6;">const</span> idx = data[i][0];
+            <span style="color: #f472b6;">const</span> pwd = data[i][1];
+            <span style="color: #f472b6;">if</span> (idx && pwd) result[idx] = pwd;
+          }
+          <span style="color: #f472b6;">return</span> ContentService.createTextOutput(JSON.stringify(result))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+    </div>
+
+    <hr>
+    <div class="footer">⚡ Password: stat353yeah! · 5 problems per topic</div>
+</div>
+
+<script>
+    (function() {
+        // ----- TOPIC DATA: review with examples, plus 5 problems --------
+        const TOPICS = [];
+
+        function addTopic(title, reviewText, exampleText, problems, mc = false) {
+            TOPICS.push({ title, review: reviewText, example: exampleText, problems, mc });
+        }
+
+        // 1. Experiment, sample space, event, multiplicative counting
+        addTopic(
+            '1. Experiment, sample space, event, multiplicative counting',
+            'An experiment is any procedure with observable outcomes. The sample space (S) is the set of all possible outcomes. An event is a subset of S. The multiplicative counting principle: if an operation has m outcomes and a second has n, the total is m × n.',
+            'Example: Tossing a coin twice → S = {HH, HT, TH, TT}, |S| = 2×2 = 4. Event A = {at least one head} = {HH, HT, TH}.',
+            [
+                'Roll a 4-sided die and a 6-sided die. How many outcomes in the sample space?',
+                'A coin is tossed 3 times. How many outcomes?',
+                'Event A = {sum of two dice is 6}. How many outcomes in A?',
+                'A license plate has 2 letters (A-Z) and 3 digits (0-9). How many plates?',
+                'A bag has 5 red, 3 green marbles. Draw two with replacement. How many outcomes?'
+            ]
+        );
+
+        // 2. Probability of an event using sample space, rules
+        addTopic(
+            '2. Calculating Probability of an event using sample space, rules',
+            'P(A) = |A| / |S|. Addition rule: P(A∪B) = P(A) + P(B) − P(A∩B). Complement rule: P(Aᶜ) = 1 − P(A). For equally likely outcomes, count favorable outcomes.',
+            'Example: Roll two dice. S has 36 outcomes. A = {sum = 7} has 6 outcomes → P(A) = 6/36 = 1/6.',
+            [
+                'Two dice are rolled. What is P(sum = 7)?',
+                'Draw a card from a deck. P(heart or face card)? (face = J,Q,K)',
+                'P(A)=0.5, P(B)=0.4, P(A∩B)=0.2. Find P(A∪B).',
+                'Roll a die: P(prime number) ?',
+                'From a deck, P(red and ace) ?'
+            ]
+        );
+
+        // 3. Disjoint events and independent events
+        addTopic(
+            '3. Disjoint events and independent events',
+            'Disjoint (mutually exclusive) events have no common outcomes: P(A∩B)=0. Independent events: P(A∩B)=P(A)P(B). If disjoint and both have positive probability, they cannot be independent.',
+            'Example: Roll a die. A={1,2}, B={3,4} are disjoint. P(A)=1/3, P(B)=1/3, P(A∩B)=0. Independent? No, because 0 ≠ 1/9.',
+            [
+                'P(A)=0.3, P(B)=0.5, disjoint. P(A∪B) ?',
+                'P(A)=0.4, P(B)=0.2, independent. P(A∩B)?',
+                'If independent, P(A|B) = P(A). Given P(A)=0.7, P(B)=0.3, find P(A|B).',
+                'Can two disjoint events be independent? (yes/no)',
+                'P(A)=0.2, P(B)=0.4, P(A∩B)=0.08. Are they independent?'
+            ]
+        );
+
+        // 4. Total probability and Bayes
+        addTopic(
+            '4. Total probability formula and Bayes formula',
+            'Total probability: P(A) = Σ P(A|Bᵢ)P(Bᵢ). Bayes: P(Bᵢ|A) = P(A|Bᵢ)P(Bᵢ) / P(A). Used when we have a partition of the sample space.',
+            'Example: Two machines produce 40% and 60% of items. Defect rates 2% and 5%. P(defect) = 0.4×0.02 + 0.6×0.05 = 0.038.',
+            [
+                'P(A|B1)=0.4, P(A|B2)=0.7, P(B1)=0.6, P(B2)=0.4. Find P(A).',
+                'Two machines: M1 makes 40% with 3% defect, M2 makes 60% with 5% defect. Overall defect rate?',
+                'Bayes: P(B1)=0.3, P(A|B1)=0.9, P(A|B2)=0.2, P(B2)=0.7. Find P(B1|A).',
+                'Test sensitivity 95%, specificity 90%, prevalence 2%. P(disease | positive)?',
+                'Urn1: 2R,3B; Urn2: 4R,1B. Pick urn at random, draw R. P(Urn1 | R)?'
+            ]
+        );
+
+        // 5. Discrete RVs, PMF, CDF, mean, sd, Binomial, Geometric, Poisson
+        addTopic(
+            '5. Discrete RVs · PMF · CDF · mean · sd · Binomial, Geometric, Poisson',
+            'PMF: P(X=x). E[X] = Σ x·p(x). Var(X) = E[X²] − μ². Binomial: P(X=k) = C(n,k)pᵏ(1−p)ⁿ⁻ᵏ. Geometric: P(X=k) = (1−p)ᵏ⁻¹p. Poisson: P(X=k) = e⁻λ λᵏ/k!.',
+            'Example: Binomial(n=10, p=0.3). P(X=3) = C(10,3)(0.3)³(0.7)⁷. E[X] = np = 3.',
+            [
+                'X: P(1)=0.1, P(2)=0.4, P(3)=0.5. Find E[X].',
+                'From above, find Var(X).',
+                'Binomial(n=8, p=0.4): P(X=3) (formula)',
+                'Geometric(p=0.3): P(first success on 5th trial) ?',
+                'Poisson(λ=3): P(X=2) ?'
+            ]
+        );
+
+        // 6. Continuous RVs, densities, mean, sd, Uniform, Exponential, Normal
+        addTopic(
+            '6. Continuous RVs · densities · mean · sd · Uniform, Exponential, Normal',
+            'Uniform(a,b): f(x)=1/(b−a), mean=(a+b)/2, var=(b−a)²/12. Exponential(λ): f(x)=λe⁻λx, mean=1/λ, sd=1/λ. Normal(μ,σ): symmetric bell curve; 68% within ±1σ.',
+            'Example: Uniform(0,10): P(X<3) = 3/10 = 0.3. Mean = 5, variance = 100/12 ≈ 8.33.',
+            [
+                'Uniform(0,12): P(X<4) ?',
+                'Uniform(0,20): mean and variance?',
+                'Exponential(λ=3): P(X>2) ?',
+                'Normal(μ=100, σ=15): P(85<X<115) approx? (68%)',
+                'Exponential(λ=0.4): mean and sd?'
+            ]
+        );
+
+        // 7. Joint distributions, marginal, covariance, correlation
+        addTopic(
+            '7. Joint distributions of two discrete RVs · marginal · covariance · correlation',
+            'Joint PMF P(X=x, Y=y). Marginal: P(X=x) = Σ_y P(x,y). Cov(X,Y) = E[XY] − E[X]E[Y]. Correlation ρ = Cov/(σxσy). Independent → covariance = 0.',
+            'Example: Joint P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4. Marginal P(X=1) = 0.2+0.1 = 0.3.',
+            [
+                'Joint: P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4. Marginal P(X=1)?',
+                'From above, find E[X].',
+                'Covariance formula involves E[XY] and ____.',
+                'Correlation coefficient is between -1 and ____.',
+                'If X,Y independent, covariance = ____.'
+            ]
+        );
+
+        // 8. Population, sample, parameter, statistic, bias, plots
+        addTopic(
+            '8. Population, sample, parameter, statistic, bias, mean, median, 5-number summary, plots',
+            'Population: entire group. Sample: subset. Parameter: numerical summary of population. Statistic: summary of sample. Unbiased: E[statistic] = parameter. 5-number: min, Q1, median, Q3, max. Bar/pie for categorical; histogram/boxplot for quantitative; scatterplot for bivariate.',
+            'Example: Sample mean x̄ is a statistic; population mean μ is a parameter. A boxplot shows the 5-number summary visually.',
+            [
+                'Sample mean is a _____ (parameter/statistic)',
+                'An estimator is unbiased if its expected value equals the _____.',
+                '5-number summary includes: min, Q1, median, Q3, and _____.',
+                'Which plot is best for showing relationship between two continuous variables?',
+                'A boxplot displays the median and the _____.'
+            ]
+        );
+
+        // 9. CI and test for population proportion
+        addTopic(
+            '9. Confidence interval of a population proportion · test of hypothesis',
+            'CI for p: p̂ ± z*√(p̂(1−p̂)/n). Test: z = (p̂ − p₀) / √(p₀(1−p₀)/n). Sample size condition: np̂ ≥ 10 and n(1−p̂) ≥ 10.',
+            'Example: n=100, x=40, p̂=0.4. 95% CI: 0.4 ± 1.96√(0.4×0.6/100) = (0.304, 0.496).',
+            [
+                'n=150, x=60, 95% CI for p (z=1.96 approx)',
+                'H0: p=0.4 vs Ha: p>0.4, n=200, x=100. z-stat?',
+                'Increasing n makes the CI ____ (narrower/wider).',
+                'p̂=0.7, n=100, standard error?',
+                'A 99% CI is wider than 95% CI: true/false?'
+            ]
+        );
+
+        // 10. CI and test for difference between two proportions
+        addTopic(
+            '10. CI & test for difference between two proportions',
+            'CI for p₁−p₂: (p̂₁−p̂₂) ± z√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂). Test uses pooled proportion p̂ = (x₁+x₂)/(n₁+n₂).',
+            'Example: p̂₁=0.6, n₁=100, p̂₂=0.5, n₂=100. SE = √(0.6×0.4/100 + 0.5×0.5/100) = 0.0707.',
+            [
+                'p̂1=0.6, n1=120, p̂2=0.5, n2=120. SE for difference?',
+                'In hypothesis test for difference, we use _____ proportion.',
+                'If CI for difference contains 0, we conclude ______.',
+                'Condition: n₁p̂₁, n₁(1−p̂₁), n₂p̂₂, n₂(1−p̂₂) all ≥ ____.',
+                'p1=0.55, p2=0.45, n1=n2=100. approximate z-stat?'
+            ]
+        );
+
+        // 11. CI and test for population mean
+        addTopic(
+            '11. Confidence interval & test for a population mean',
+            'CI: x̄ ± t* s/√n (or z if σ known). Test: t = (x̄ − μ₀)/(s/√n). Use t-distribution with df = n−1 when σ unknown.',
+            'Example: x̄=50, s=10, n=25. 95% CI: 50 ± 2.064×10/5 = (45.87, 54.13).',
+            [
+                'x̄=42, s=8, n=25, 95% CI (use t₀.₀₂₅≈2.064)',
+                'When σ unknown, use _____ distribution.',
+                'H0: μ=50, Ha: μ≠50, x̄=53, s=10, n=30. t-stat?',
+                '90% CI is narrower than 95% CI: true/false?',
+                'For large n, t and z are approximately equal: true?'
+            ]
+        );
+
+        // 12. CI and test for difference between two means
+        addTopic(
+            '12. CI & test for difference between two means',
+            'Two-sample t: (x̄₁−x̄₂) ± t*√(s₁²/n₁ + s₂²/n₂). Pooled when variances equal. Paired t-test for dependent samples.',
+            'Example: x̄₁=30, s₁=5, n₁=25; x̄₂=28, s₂=6, n₂=25. SE = √(25/25 + 36/25) = √(2.44) = 1.56.',
+            [
+                'x̄1=30, s1=5, n1=25; x̄2=28, s2=6, n2=25. SE difference?',
+                'Pooled variance is used when we assume ____ variances.',
+                'Paired t-test is used for ____ samples.',
+                'If p-value < 0.05 for H0: μ1=μ2, we reject H0: true/false?',
+                'CI for μ1−μ2 includes 0 → no significant difference. True?'
+            ]
+        );
+
+        // 13. Chi-square test for GOF and independence
+        addTopic(
+            '13. Chi-square test for GOF and independence',
+            'GOF: Σ (O−E)²/E. df = categories − 1. Independence: df = (r−1)(c−1). Expected counts ≥ 5. Large χ² → small p-value → reject H₀.',
+            'Example: GOF with 4 categories, df=3. Independence test for 2×3 table, df=(2−1)(3−1)=2.',
+            [
+                'GOF with 6 categories, df = ?',
+                'Independence test for 4x5 table, df = ?',
+                'Expected count in chi-square should be at least ____.',
+                'Large chi-square stat → small p-value → reject H0: true?',
+                'GOF null hypothesis specifies the ____ distribution.'
+            ]
+        );
+
+        // 14. ANOVA (MC)
+        addTopic(
+            '14. 1-way ANOVA (multiple choice)',
+            'ANOVA compares means of 3+ groups. F = MSB/MSW. Assumptions: normality, equal variances, independence. H₀: all means equal.',
+            'Example: 4 groups, each with 10 observations. df numerator = 3, df denominator = 36. F = MSB/MSW.',
+            [
+                'ANOVA compares means of (a) 2 groups (b) 3+ groups (c) paired data',
+                'F-statistic = MSB/MSW. MSB measures (a) within-group (b) between-group (c) total',
+                'ANOVA assumptions include (a) normality (b) equal variances (c) both',
+                'If F > critical value, we (a) reject H0 (b) fail to reject',
+                'df numerator in 1-way ANOVA: (a) k−1 (b) n−k (c) n−1'
+            ],
+            true
+        );
+
+        // 15. Regression (MC)
+        addTopic(
+            '15. Simple and multiple regression (MC)',
+            'Simple regression: one predictor. Multiple: several. R² = proportion variance explained. Coefficient β: slope holding others constant. Residual = observed − predicted.',
+            'Example: Simple regression y = β₀ + β₁x. R² = 0.85 means 85% of variance explained. Adjusted R² penalizes for extra predictors.',
+            [
+                'In simple regression, R² measures (a) correlation (b) proportion variance explained (c) slope',
+                'Multiple regression: β₁ represents (a) intercept (b) slope with other predictors fixed (c) correlation',
+                'Residual = (a) observed − predicted (b) predicted − observed (c) observed / predicted',
+                'Adjusted R² is used when (a) adding predictors (b) removing outliers (c) transforming data',
+                'p-value for coefficient tests H0: β=0. p<0.05 → (a) significant (b) not significant'
+            ],
+            true
+        );
+
+        // 16. Control charts (MC)
+        addTopic(
+            '16. Control charts (x̄, R, p) (MC)',
+            'x̄ chart monitors process mean. R chart monitors variability. p chart monitors proportion defective. Control limits at ±3σ. Points outside limits indicate special cause variation.',
+            'Example: x̄ chart with CL = 10, UCL = 12, LCL = 8. A point at 13 signals special cause.',
+            [
+                'x̄ chart monitors (a) variability (b) central tendency (c) proportion',
+                'R chart monitors (a) mean (b) range (c) fraction defective',
+                'p chart is for (a) continuous data (b) attribute/proportion data (c) individual measurements',
+                'Control limits typically set at (a) ±1σ (b) ±2σ (c) ±3σ',
+                'Point outside limits indicates (a) common cause (b) special cause (c) no action'
+            ],
+            true
+        );
+
+        // ----- Password -------------------------------------------------
+        const CORRECT_PASSWORD = 'stat353yeah!';
+
+        // ----- DOM refs -------------------------------------------------
+        const selectEl = document.getElementById('topicSelect');
+        const passwordInput = document.getElementById('passwordInput');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        const reviewContent = document.getElementById('reviewContent');
+        const topicBadge = document.getElementById('topicBadge');
+        const problemsContainer = document.getElementById('problemsContainer');
+        const problemCount = document.getElementById('problemCount');
+        const lockIcon = document.getElementById('lockIcon');
+        const lockStatusBadge = document.getElementById('lockStatusBadge');
+
+        // populate dropdown
+        TOPICS.forEach((t, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = t.title;
+            selectEl.appendChild(opt);
+        });
+
+        // state: unlocked topics
+        const unlocked = new Set();
+
+        // ----- render functions -----------------------------------------
+        function renderTopic(index, showProblems = false) {
+            const topic = TOPICS[index];
+            if (!topic) return;
+
+            // review with example
+            const isUnlocked = unlocked.has(index);
+            topicBadge.textContent = `topic ${index+1}`;
+            lockIcon.textContent = isUnlocked ? '🔓' : '🔒';
+            lockStatusBadge.textContent = isUnlocked ? 'unlocked' : 'locked';
+            lockStatusBadge.style.background = isUnlocked ? '#dcfce7' : '#e2e8f0';
+            lockStatusBadge.style.color = isUnlocked ? '#14532d' : '#475569';
+
+            // Build review HTML with example
+            let reviewHtml = `<p>${topic.review}</p>`;
+            if (topic.example) {
+                reviewHtml += `<div class="example"><strong>📌 Example:</strong> ${topic.example}</div>`;
+            }
+            reviewContent.innerHTML = reviewHtml;
+
+            if (showProblems && isUnlocked) {
+                const probs = topic.problems;
+                const mc = topic.mc || false;
+                problemCount.textContent = probs.length;
+
+                let html = '';
+                probs.forEach((p, i) => {
+                    const num = i+1;
+                    let mcHtml = mc ? `<span class="badge-mc">MC</span>` : '';
+                    html += `
+                        <div class="problem-item">
+                            <div class="problem-num">${num}</div>
+                            <div class="problem-text">${p} ${mcHtml}</div>
+                        </div>
+                    `;
+                });
+                problemsContainer.innerHTML = html;
+                statusMsg.textContent = '✅ unlocked';
+                statusMsg.className = 'status-msg success';
+            } else if (showProblems && !isUnlocked) {
+                problemsContainer.innerHTML = `<div class="empty-state">🔒 Unlock to view problems</div>`;
+                problemCount.textContent = '🔒';
+                statusMsg.textContent = '🔒 locked';
+                statusMsg.className = 'status-msg error';
+            } else {
+                if (isUnlocked) {
+                    problemsContainer.innerHTML = `<div class="empty-state">✅ Click "Unlock" to show problems</div>`;
+                    problemCount.textContent = 'unlocked';
+                } else {
+                    problemsContainer.innerHTML = `<div class="empty-state">🔒 Unlock to view problems</div>`;
+                    problemCount.textContent = '0';
+                }
+            }
+        }
+
+        // ----- unlock logic --------------------------------------------
+        function attemptUnlock() {
+            const idx = parseInt(selectEl.value, 10);
+            if (isNaN(idx) || idx < 0 || idx >= TOPICS.length) {
+                statusMsg.textContent = '⚠️ Invalid topic';
+                statusMsg.className = 'status-msg error';
+                return;
+            }
+
+            const entered = passwordInput.value.trim();
+            if (!entered) {
+                statusMsg.textContent = '⚠️ Please enter a password';
+                statusMsg.className = 'status-msg error';
+                return;
+            }
+
+            if (entered === CORRECT_PASSWORD) {
+                unlocked.add(idx);
+                statusMsg.textContent = '✅ Access granted!';
+                statusMsg.className = 'status-msg success';
+                renderTopic(idx, true);
+            } else {
+                statusMsg.textContent = '❌ Wrong password. Try again.';
+                statusMsg.className = 'status-msg error';
+                if (unlocked.has(idx)) unlocked.delete(idx);
+                renderTopic(idx, false);
+            }
+        }
+
+        // ----- event listeners -----------------------------------------
+        unlockBtn.addEventListener('click', attemptUnlock);
+
+        selectEl.addEventListener('change', function() {
+            const idx = parseInt(selectEl.value, 10);
+            if (!isNaN(idx) && TOPICS[idx]) {
+                const isUnlocked = unlocked.has(idx);
+                renderTopic(idx, isUnlocked);
+                passwordInput.value = '';
+                if (isUnlocked) {
+                    statusMsg.textContent = '✅ unlocked';
+                    statusMsg.className = 'status-msg success';
+                } else {
+                    statusMsg.textContent = '🔒 locked';
+                    statusMsg.className = 'status-msg';
+                }
+            }
+        });
+
+        // initial load: topic 0
+        selectEl.value = 0;
+        renderTopic(0, false);
+        statusMsg.textContent = '🔒 locked';
+        statusMsg.className = 'status-msg';
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                unlockBtn.click();
+            }
+        });
+
+        console.log('✅ Password: stat353yeah!');
+    })();
+</script>
+</body>
+</html>
