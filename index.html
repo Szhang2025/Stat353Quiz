@@ -109,6 +109,14 @@
         }
         .btn:hover { background: #0f172a; transform: scale(0.98); }
         .btn:active { background: #020617; }
+        .btn-sm {
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+            background: #3b82f6;
+        }
+        .btn-sm:hover { background: #2563eb; }
+        .btn-sm.active { background: #059669; }
+        .btn-sm.active:hover { background: #047857; }
         .status-msg {
             font-size: 0.85rem;
             padding: 0.3rem 0.8rem;
@@ -197,12 +205,13 @@
             margin-bottom: 0.7rem;
             border: 1px solid #e9edf2;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .problem-item:hover { border-color: #b9c7da; }
+        .problem-header {
             display: flex;
             align-items: flex-start;
             gap: 0.8rem;
-            transition: 0.1s;
         }
-        .problem-item:hover { border-color: #b9c7da; }
         .problem-num {
             font-weight: 600;
             color: #3b82f6;
@@ -217,6 +226,30 @@
             font-size: 0.85rem;
         }
         .problem-text { flex: 1; line-height: 1.5; }
+        .problem-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.5rem;
+            padding-left: 2.2rem;
+        }
+        .solution-box {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            margin-top: 0.5rem;
+            margin-left: 2.2rem;
+            display: none;
+            font-size: 0.9rem;
+            color: #14532d;
+        }
+        .solution-box.show { display: block; }
+        .solution-box .label {
+            font-weight: 600;
+            color: #047857;
+            margin-right: 0.5rem;
+        }
         .badge-mc {
             background: #dbeafe;
             color: #1e4a8b;
@@ -250,6 +283,7 @@
             .password-group { margin-left: 0; width: 100%; }
             .password-group input { flex: 1; }
             .btn { width: 100%; }
+            .problem-actions { flex-wrap: wrap; }
         }
     </style>
 </head>
@@ -284,13 +318,12 @@
     </div>
 
     <hr>
-    <div class="footer">⚡ Passwords are securely stored in Google Sheets and verified server-side.</div>
+    <div class="footer">⚡ Passwords are securely stored in Google Sheets · topic-specific passwords</div>
 </div>
 
 <script>
     (function() {
         // ----- Configuration --------------------------------------------
-        // Your Google Apps Script Web App URL
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz1p258Ubrf0lM_FybsZ_kuTWP_e_ADx_-dBx08tDw8sEmmOuPVmyj6cQqtaKnQa3hT/exec';
         
         const debugEl = document.getElementById('debugInfo');
@@ -308,11 +341,11 @@
             }
         }
         
-        // ----- TOPIC DATA: review with examples, plus 5 problems --------
+        // ----- TOPIC DATA: review with examples, solutions for problems --
         const TOPICS = [];
 
-        function addTopic(title, reviewText, exampleText, problems, mc = false) {
-            TOPICS.push({ title, review: reviewText, example: exampleText, problems, mc });
+        function addTopic(title, reviewText, exampleText, problems, solutions, mc = false) {
+            TOPICS.push({ title, review: reviewText, example: exampleText, problems, solutions, mc });
         }
 
         // 1. Experiment, sample space, event, multiplicative counting
@@ -326,6 +359,13 @@
                 'Event A = {sum of two dice is 6}. How many outcomes in A?',
                 'A license plate has 2 letters (A-Z) and 3 digits (0-9). How many plates?',
                 'A bag has 5 red, 3 green marbles. Draw two with replacement. How many outcomes?'
+            ],
+            [
+                '4 × 6 = 24 outcomes',
+                '2³ = 8 outcomes',
+                'There are 5 outcomes: (1,5), (2,4), (3,3), (4,2), (5,1)',
+                '26² × 10³ = 676,000 plates',
+                '8 × 8 = 64 outcomes'
             ]
         );
 
@@ -340,6 +380,13 @@
                 'P(A)=0.5, P(B)=0.4, P(A∩B)=0.2. Find P(A∪B).',
                 'Roll a die: P(prime number) ?',
                 'From a deck, P(red and ace) ?'
+            ],
+            [
+                '6/36 = 1/6 ≈ 0.1667',
+                'P(heart) = 13/52, P(face) = 12/52, P(heart ∩ face) = 3/52 → (13+12-3)/52 = 22/52 = 11/26',
+                '0.5 + 0.4 − 0.2 = 0.7',
+                'Prime numbers: 2,3,5 → 3/6 = 1/2',
+                '2 red aces (A♥, A♦) → 2/52 = 1/26'
             ]
         );
 
@@ -354,6 +401,13 @@
                 'If independent, P(A|B) = P(A). Given P(A)=0.7, P(B)=0.3, find P(A|B).',
                 'Can two disjoint events be independent? (yes/no)',
                 'P(A)=0.2, P(B)=0.4, P(A∩B)=0.08. Are they independent?'
+            ],
+            [
+                '0.3 + 0.5 = 0.8',
+                '0.4 × 0.2 = 0.08',
+                'P(A|B) = P(A) = 0.7',
+                'No (unless one has probability 0)',
+                'Yes: 0.2 × 0.4 = 0.08 ✓'
             ]
         );
 
@@ -368,6 +422,13 @@
                 'Bayes: P(B1)=0.3, P(A|B1)=0.9, P(A|B2)=0.2, P(B2)=0.7. Find P(B1|A).',
                 'Test sensitivity 95%, specificity 90%, prevalence 2%. P(disease | positive)?',
                 'Urn1: 2R,3B; Urn2: 4R,1B. Pick urn at random, draw R. P(Urn1 | R)?'
+            ],
+            [
+                '0.4×0.6 + 0.7×0.4 = 0.24 + 0.28 = 0.52',
+                '0.4×0.03 + 0.6×0.05 = 0.012 + 0.03 = 0.042 = 4.2%',
+                'P(A) = 0.9×0.3 + 0.2×0.7 = 0.27 + 0.14 = 0.41 → 0.27/0.41 ≈ 0.6585',
+                'P(disease|+) = (0.95×0.02)/(0.95×0.02 + 0.10×0.98) = 0.019/0.117 ≈ 0.1624',
+                'P(R) = 0.5×0.4 + 0.5×0.8 = 0.2 + 0.4 = 0.6 → P(Urn1|R) = 0.2/0.6 = 1/3'
             ]
         );
 
@@ -382,6 +443,13 @@
                 'Binomial(n=8, p=0.4): P(X=3) (formula)',
                 'Geometric(p=0.3): P(first success on 5th trial) ?',
                 'Poisson(λ=3): P(X=2) ?'
+            ],
+            [
+                'E[X] = 1×0.1 + 2×0.4 + 3×0.5 = 0.1 + 0.8 + 1.5 = 2.4',
+                'E[X²] = 1×0.1 + 4×0.4 + 9×0.5 = 0.1 + 1.6 + 4.5 = 6.2 → Var = 6.2 − 2.4² = 6.2 − 5.76 = 0.44',
+                'C(8,3)(0.4)³(0.6)⁵ = 56 × 0.064 × 0.07776 ≈ 0.2787',
+                'P(X=5) = (0.7)⁴ × 0.3 = 0.2401 × 0.3 = 0.07203',
+                'P(X=2) = e⁻³ × 3²/2! = e⁻³ × 9/2 ≈ 0.2240'
             ]
         );
 
@@ -396,6 +464,13 @@
                 'Exponential(λ=3): P(X>2) ?',
                 'Normal(μ=100, σ=15): P(85<X<115) approx? (68%)',
                 'Exponential(λ=0.4): mean and sd?'
+            ],
+            [
+                '4/12 = 1/3 ≈ 0.333',
+                'Mean = 10, Variance = 400/12 ≈ 33.33',
+                'P(X>2) = e⁻⁶ ≈ 0.00248',
+                'P(μ−σ < X < μ+σ) ≈ 0.68 = 68%',
+                'Mean = 1/0.4 = 2.5, SD = 2.5'
             ]
         );
 
@@ -410,6 +485,13 @@
                 'Covariance formula involves E[XY] and ____.',
                 'Correlation coefficient is between -1 and ____.',
                 'If X,Y independent, covariance = ____.'
+            ],
+            [
+                'P(X=1) = 0.2 + 0.1 = 0.3',
+                'E[X] = 1×0.3 + 2×0.7 = 0.3 + 1.4 = 1.7',
+                'E[X]E[Y]',
+                '+1',
+                '0'
             ]
         );
 
@@ -424,6 +506,13 @@
                 '5-number summary includes: min, Q1, median, Q3, and _____.',
                 'Which plot is best for showing relationship between two continuous variables?',
                 'A boxplot displays the median and the _____.'
+            ],
+            [
+                'statistic',
+                'parameter (population value)',
+                'max',
+                'scatterplot',
+                'interquartile range (IQR) or quartiles'
             ]
         );
 
@@ -438,6 +527,13 @@
                 'Increasing n makes the CI ____ (narrower/wider).',
                 'p̂=0.7, n=100, standard error?',
                 'A 99% CI is wider than 95% CI: true/false?'
+            ],
+            [
+                'p̂ = 60/150 = 0.4, SE = √(0.4×0.6/150) = 0.04, CI = 0.4 ± 1.96×0.04 = (0.322, 0.478)',
+                'p̂ = 100/200 = 0.5, z = (0.5 − 0.4)/√(0.4×0.6/200) = 0.1/0.0346 ≈ 2.89',
+                'narrower',
+                'SE = √(0.7×0.3/100) = √0.0021 ≈ 0.0458',
+                'true'
             ]
         );
 
@@ -452,6 +548,13 @@
                 'If CI for difference contains 0, we conclude ______.',
                 'Condition: n₁p̂₁, n₁(1−p̂₁), n₂p̂₂, n₂(1−p̂₂) all ≥ ____.',
                 'p1=0.55, p2=0.45, n1=n2=100. approximate z-stat?'
+            ],
+            [
+                'SE = √(0.6×0.4/120 + 0.5×0.5/120) = √(0.002 + 0.00208) = √0.00408 ≈ 0.0639',
+                'pooled',
+                'no significant difference',
+                '5 or 10 (usually 5)',
+                'p̂ = (55+45)/200 = 0.5, z = (0.55−0.45)/√(0.5×0.5×2/100) = 0.1/0.0707 ≈ 1.414'
             ]
         );
 
@@ -466,6 +569,13 @@
                 'H0: μ=50, Ha: μ≠50, x̄=53, s=10, n=30. t-stat?',
                 '90% CI is narrower than 95% CI: true/false?',
                 'For large n, t and z are approximately equal: true?'
+            ],
+            [
+                'SE = 8/√25 = 1.6, CI = 42 ± 2.064×1.6 = (38.70, 45.30)',
+                't',
+                't = (53−50)/(10/√30) = 3/1.826 = 1.643',
+                'true',
+                'true'
             ]
         );
 
@@ -480,6 +590,13 @@
                 'Paired t-test is used for ____ samples.',
                 'If p-value < 0.05 for H0: μ1=μ2, we reject H0: true/false?',
                 'CI for μ1−μ2 includes 0 → no significant difference. True?'
+            ],
+            [
+                'SE = √(25/25 + 36/25) = √(1 + 1.44) = √2.44 ≈ 1.562',
+                'equal',
+                'dependent/paired',
+                'true',
+                'true'
             ]
         );
 
@@ -494,6 +611,13 @@
                 'Expected count in chi-square should be at least ____.',
                 'Large chi-square stat → small p-value → reject H0: true?',
                 'GOF null hypothesis specifies the ____ distribution.'
+            ],
+            [
+                'df = 5',
+                '(4−1)(5−1) = 3×4 = 12',
+                '5',
+                'true',
+                'expected/probability'
             ]
         );
 
@@ -508,6 +632,13 @@
                 'ANOVA assumptions include (a) normality (b) equal variances (c) both',
                 'If F > critical value, we (a) reject H0 (b) fail to reject',
                 'df numerator in 1-way ANOVA: (a) k−1 (b) n−k (c) n−1'
+            ],
+            [
+                'Answer: (b) 3+ groups',
+                'Answer: (b) between-group',
+                'Answer: (c) both',
+                'Answer: (a) reject H0',
+                'Answer: (a) k−1'
             ],
             true
         );
@@ -524,6 +655,13 @@
                 'Adjusted R² is used when (a) adding predictors (b) removing outliers (c) transforming data',
                 'p-value for coefficient tests H0: β=0. p<0.05 → (a) significant (b) not significant'
             ],
+            [
+                'Answer: (b) proportion variance explained',
+                'Answer: (b) slope with other predictors fixed',
+                'Answer: (a) observed − predicted',
+                'Answer: (a) adding predictors',
+                'Answer: (a) significant'
+            ],
             true
         );
 
@@ -538,6 +676,13 @@
                 'p chart is for (a) continuous data (b) attribute/proportion data (c) individual measurements',
                 'Control limits typically set at (a) ±1σ (b) ±2σ (c) ±3σ',
                 'Point outside limits indicates (a) common cause (b) special cause (c) no action'
+            ],
+            [
+                'Answer: (b) central tendency',
+                'Answer: (b) range',
+                'Answer: (b) attribute/proportion data',
+                'Answer: (c) ±3σ',
+                'Answer: (b) special cause'
             ],
             true
         );
@@ -595,7 +740,6 @@
                 statusMsg.textContent = '🔒 locked (ready)';
                 statusMsg.className = 'status-msg';
                 
-                // If current topic is already unlocked, keep it that way
                 const currentIdx = parseInt(selectEl.value, 10);
                 if (unlocked.has(currentIdx)) {
                     renderTopic(currentIdx, true);
@@ -621,7 +765,6 @@
             lockStatusBadge.style.background = isUnlocked ? '#dcfce7' : '#e2e8f0';
             lockStatusBadge.style.color = isUnlocked ? '#14532d' : '#475569';
 
-            // Build review HTML with example
             let reviewHtml = `<p>${topic.review}</p>`;
             if (topic.example) {
                 reviewHtml += `<div class="example"><strong>📌 Example:</strong> ${topic.example}</div>`;
@@ -630,17 +773,29 @@
 
             if (showProblems && isUnlocked) {
                 const probs = topic.problems;
+                const sols = topic.solutions;
                 const mc = topic.mc || false;
                 problemCount.textContent = probs.length;
 
                 let html = '';
                 probs.forEach((p, i) => {
                     const num = i+1;
+                    const solution = sols && sols[i] ? sols[i] : 'Solution not available';
                     let mcHtml = mc ? `<span class="badge-mc">MC</span>` : '';
+                    const solutionId = `solution-${index}-${i}`;
+                    
                     html += `
                         <div class="problem-item">
-                            <div class="problem-num">${num}</div>
-                            <div class="problem-text">${p} ${mcHtml}</div>
+                            <div class="problem-header">
+                                <div class="problem-num">${num}</div>
+                                <div class="problem-text">${p} ${mcHtml}</div>
+                            </div>
+                            <div class="problem-actions">
+                                <button class="btn btn-sm" onclick="toggleSolution('${solutionId}')">💡 Show Solution</button>
+                            </div>
+                            <div id="${solutionId}" class="solution-box">
+                                <span class="label">📖 Solution:</span> ${solution}
+                            </div>
                         </div>
                     `;
                 });
@@ -663,6 +818,20 @@
             }
         }
 
+        // ----- toggle solution (global function) ------------------------
+        window.toggleSolution = function(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                const isShowing = el.classList.contains('show');
+                el.classList.toggle('show');
+                const btn = el.parentElement.querySelector('.btn-sm');
+                if (btn) {
+                    btn.textContent = isShowing ? '💡 Show Solution' : '🙈 Hide Solution';
+                    btn.classList.toggle('active');
+                }
+            }
+        };
+
         // ----- unlock logic --------------------------------------------
         function attemptUnlock() {
             const idx = parseInt(selectEl.value, 10);
@@ -683,18 +852,16 @@
                 statusMsg.textContent = '⏳ Loading passwords...';
                 statusMsg.className = 'status-msg loading';
                 loadPasswords().then(() => {
-                    // Try again after loading
                     attemptUnlock();
                 });
                 return;
             }
 
-            // Topic index is 1-based in Google Sheet (1-16)
             const sheetIndex = idx + 1;
             const correctPassword = passwords[sheetIndex] || '';
 
             if (!correctPassword) {
-                statusMsg.textContent = '⚠️ No password set for this topic';
+                statusMsg.textContent = `⚠️ No password set for topic ${sheetIndex} in Google Sheet`;
                 statusMsg.className = 'status-msg error';
                 return;
             }
@@ -739,18 +906,16 @@
         });
 
         // ----- Initialize -----------------------------------------------
-        // Load passwords from Google Sheets
         loadPasswords();
-
-        // initial load: topic 0
         selectEl.value = 0;
         renderTopic(0, false);
         statusMsg.textContent = '🔒 locked';
         statusMsg.className = 'status-msg';
 
-        console.log('🔐 Passwords are securely stored in Google Sheets and fetched via Apps Script web app.');
+        console.log('🔐 Topic-specific passwords stored in Google Sheets');
         console.log(`📡 Web App URL: ${WEB_APP_URL}`);
         console.log('✅ No passwords are hardcoded in this HTML file.');
+        console.log('💡 Each topic has its own password in the Google Sheet!');
     })();
 </script>
 </body>
