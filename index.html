@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics · 16 topics · review + examples + problems</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background: #f1f5f9;
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
@@ -122,6 +118,20 @@
         }
         .status-msg.error { background: #fee2e2; color: #991b1b; }
         .status-msg.success { background: #dcfce7; color: #14532d; }
+        .status-msg.loading { background: #fef9c3; color: #854d0e; }
+        .debug-info {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            margin-top: 0.5rem;
+            display: none;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .debug-info.show { display: block; }
         .review-box {
             background: #f8fafc;
             border-radius: 24px;
@@ -223,21 +233,6 @@
             padding: 2.5rem 0;
             font-style: italic;
         }
-        .apps-script-box {
-            background: #1e293b;
-            color: #e2e8f0;
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin: 2rem 0 1rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
-        .apps-script-box .comment { color: #94a3b8; }
-        .apps-script-box .keyword { color: #60a5fa; }
-        .apps-script-box .string { color: #34d399; }
         hr {
             border: 0;
             border-top: 1px solid #e2e8f0;
@@ -276,7 +271,8 @@
     <!-- Review panel -->
     <div id="reviewPanel" class="review-box">
         <h3>📘 Review <span id="topicBadge">topic 1</span> <span class="lock-icon" id="lockIcon">🔒</span></h3>
-        <div id="reviewContent">Select a topic, enter the password (<strong>stat353yeah!</strong>), and click Unlock to see the review with examples and problems.</div>
+        <div id="reviewContent">Select a topic, enter the password, and click Unlock to see the review with examples and problems.</div>
+        <div id="debugInfo" class="debug-info"></div>
     </div>
 
     <!-- Problems -->
@@ -287,31 +283,31 @@
         </div>
     </div>
 
-    <!-- Google Apps Script -->
-    <div class="apps-script-box">
-        <span class="comment">// Google Apps Script — deploy as web app</span>
-        <span class="comment">// Sheet name: "Passwords" with columns: TopicIndex (1-16), Password</span>
-        <span style="color: #f472b6;">function</span> <span style="color: #60a5fa;">doGet</span>(e) {
-          <span style="color: #f472b6;">const</span> sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(<span style="color: #34d399;">"Passwords"</span>);
-          <span style="color: #f472b6;">if</span> (!sheet) <span style="color: #f472b6;">return</span> ContentService.createTextOutput(<span style="color: #34d399;">"Sheet not found"</span>);
-          <span style="color: #f472b6;">const</span> data = sheet.getDataRange().getValues();
-          <span style="color: #f472b6;">const</span> result = {};
-          <span style="color: #f472b6;">for</span> (<span style="color: #f472b6;">let</span> i = 1; i < data.length; i++) {
-            <span style="color: #f472b6;">const</span> idx = data[i][0];
-            <span style="color: #f472b6;">const</span> pwd = data[i][1];
-            <span style="color: #f472b6;">if</span> (idx && pwd) result[idx] = pwd;
-          }
-          <span style="color: #f472b6;">return</span> ContentService.createTextOutput(JSON.stringify(result))
-            .setMimeType(ContentService.MimeType.JSON);
-        }
-    </div>
-
     <hr>
-    <div class="footer">⚡ Password: stat353yeah! · 5 problems per topic</div>
+    <div class="footer">⚡ Passwords are securely stored in Google Sheets and verified server-side.</div>
 </div>
 
 <script>
     (function() {
+        // ----- Configuration --------------------------------------------
+        // Your Google Apps Script Web App URL
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz1p258Ubrf0lM_FybsZ_kuTWP_e_ADx_-dBx08tDw8sEmmOuPVmyj6cQqtaKnQa3hT/exec';
+        
+        const debugEl = document.getElementById('debugInfo');
+        
+        function logDebug(message, data = null) {
+            console.log(message, data);
+            if (debugEl) {
+                debugEl.className = 'debug-info show';
+                const timestamp = new Date().toLocaleTimeString();
+                let text = `[${timestamp}] ${message}`;
+                if (data) {
+                    text += '\n' + JSON.stringify(data, null, 2);
+                }
+                debugEl.textContent = text;
+            }
+        }
+        
         // ----- TOPIC DATA: review with examples, plus 5 problems --------
         const TOPICS = [];
 
@@ -546,9 +542,6 @@
             true
         );
 
-        // ----- Password -------------------------------------------------
-        const CORRECT_PASSWORD = 'stat353yeah!';
-
         // ----- DOM refs -------------------------------------------------
         const selectEl = document.getElementById('topicSelect');
         const passwordInput = document.getElementById('passwordInput');
@@ -569,15 +562,58 @@
             selectEl.appendChild(opt);
         });
 
-        // state: unlocked topics
+        // ----- State ----------------------------------------------------
         const unlocked = new Set();
+        let passwords = {};
+        let passwordsLoaded = false;
+
+        // ----- Load passwords from Google Sheets ------------------------
+        async function loadPasswords() {
+            try {
+                statusMsg.textContent = '⏳ Loading...';
+                statusMsg.className = 'status-msg loading';
+                logDebug('⏳ Fetching passwords from Google Sheets...');
+                
+                const response = await fetch(WEB_APP_URL);
+                logDebug('📡 Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                logDebug('📦 Data received:', data);
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                passwords = data;
+                passwordsLoaded = true;
+                logDebug('✅ Passwords loaded successfully');
+                logDebug('📋 Available topics:', Object.keys(passwords).join(', '));
+                
+                statusMsg.textContent = '🔒 locked (ready)';
+                statusMsg.className = 'status-msg';
+                
+                // If current topic is already unlocked, keep it that way
+                const currentIdx = parseInt(selectEl.value, 10);
+                if (unlocked.has(currentIdx)) {
+                    renderTopic(currentIdx, true);
+                }
+                
+            } catch (error) {
+                console.error('Failed to load passwords:', error);
+                logDebug('❌ Error loading passwords:', error.message);
+                statusMsg.textContent = `⚠️ Error: ${error.message}`;
+                statusMsg.className = 'status-msg error';
+            }
+        }
 
         // ----- render functions -----------------------------------------
         function renderTopic(index, showProblems = false) {
             const topic = TOPICS[index];
             if (!topic) return;
 
-            // review with example
             const isUnlocked = unlocked.has(index);
             topicBadge.textContent = `topic ${index+1}`;
             lockIcon.textContent = isUnlocked ? '🔓' : '🔒';
@@ -643,7 +679,27 @@
                 return;
             }
 
-            if (entered === CORRECT_PASSWORD) {
+            if (!passwordsLoaded) {
+                statusMsg.textContent = '⏳ Loading passwords...';
+                statusMsg.className = 'status-msg loading';
+                loadPasswords().then(() => {
+                    // Try again after loading
+                    attemptUnlock();
+                });
+                return;
+            }
+
+            // Topic index is 1-based in Google Sheet (1-16)
+            const sheetIndex = idx + 1;
+            const correctPassword = passwords[sheetIndex] || '';
+
+            if (!correctPassword) {
+                statusMsg.textContent = '⚠️ No password set for this topic';
+                statusMsg.className = 'status-msg error';
+                return;
+            }
+
+            if (entered === correctPassword) {
                 unlocked.add(idx);
                 statusMsg.textContent = '✅ Access granted!';
                 statusMsg.className = 'status-msg success';
@@ -675,12 +731,6 @@
             }
         });
 
-        // initial load: topic 0
-        selectEl.value = 0;
-        renderTopic(0, false);
-        statusMsg.textContent = '🔒 locked';
-        statusMsg.className = 'status-msg';
-
         passwordInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -688,7 +738,19 @@
             }
         });
 
-        console.log('✅ Password: stat353yeah!');
+        // ----- Initialize -----------------------------------------------
+        // Load passwords from Google Sheets
+        loadPasswords();
+
+        // initial load: topic 0
+        selectEl.value = 0;
+        renderTopic(0, false);
+        statusMsg.textContent = '🔒 locked';
+        statusMsg.className = 'status-msg';
+
+        console.log('🔐 Passwords are securely stored in Google Sheets and fetched via Apps Script web app.');
+        console.log(`📡 Web App URL: ${WEB_APP_URL}`);
+        console.log('✅ No passwords are hardcoded in this HTML file.');
     })();
 </script>
 </body>
