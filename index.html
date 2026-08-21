@@ -179,6 +179,23 @@
             border-left: 3px solid #3b82f6;
         }
         .review-box .example strong { color: #0f172a; }
+        .review-box .example .highlight {
+            background: #fef9c3;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .review-box .important-box {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0 0.2rem 0;
+            font-size: 0.92rem;
+            border-left: 3px solid #ef4444;
+            color: #991b1b;
+        }
+        .review-box .important-box strong { color: #7f1d1d; }
         .lock-icon { font-size: 1.2rem; }
         .problems-section { margin-top: 1.8rem; }
         .problems-section h2 {
@@ -249,6 +266,13 @@
             font-weight: 600;
             color: #047857;
             margin-right: 0.5rem;
+        }
+        .solution-hidden-note {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-style: italic;
+            margin-left: 2.2rem;
+            margin-top: 0.2rem;
         }
         .badge-mc {
             background: #dbeafe;
@@ -351,29 +375,29 @@
         // 1. Experiment, sample space, event, multiplicative counting
         addTopic(
             '1. Experiment, sample space, event, multiplicative counting',
-            'An experiment is any procedure with observable outcomes. The sample space (S) is the set of all possible outcomes. An event is a subset of S. The multiplicative counting principle: if an operation has m outcomes and a second has n, the total is m × n.',
-            'Example: Tossing a coin twice → S = {HH, HT, TH, TT}, |S| = 2×2 = 4. Event A = {at least one head} = {HH, HT, TH}.',
+            'An experiment is any procedure with observable outcomes. The sample space (S) is the set of all possible outcomes. An event is a subset of S. The multiplicative counting principle: if an operation has m outcomes and a second has n, the total is m × n. <br><br><div class="important-box"><strong>⚠️ IMPORTANT:</strong> If equally likely outcomes are NOT assumed, then there will be ambiguity regarding the sample space. Different probability models could assign different probabilities to the same outcomes. The formula P(A) = |A|/|S| ONLY works when all outcomes in S are equally likely.</div>',
+            'Example: Tossing a coin twice → S = {HH, HT, TH, TT}, |S| = 2×2 = 4. Event A = {at least one head} = {HH, HT, TH}. Each outcome is equally likely with probability 1/4. Therefore, P(A) = 3/4.',
             [
                 'Roll a 4-sided die and a 6-sided die. How many outcomes in the sample space?',
                 'A coin is tossed 3 times. How many outcomes?',
                 'Event A = {sum of two dice is 6}. How many outcomes in A?',
                 'A license plate has 2 letters (A-Z) and 3 digits (0-9). How many plates?',
-                'A bag has 5 red, 3 green marbles. Draw two with replacement. How many outcomes?'
+                'A bag has 5 red marbles and 3 green marbles. You draw two marbles with replacement (put the first marble back before drawing the second). How many outcomes are in the sample space? <br><br><span style="color:#991b1b;font-weight:500;">💡 Key Concept:</span> Each draw has 8 equally likely outcomes, and with replacement, the total number of equally likely outcomes is 8 × 8 = 64. <span style="color:#991b1b;font-weight:500;">Without the equally likely assumption, the sample space would be ambiguous.</span>'
             ],
             [
                 '4 × 6 = 24 outcomes',
                 '2³ = 8 outcomes',
                 'There are 5 outcomes: (1,5), (2,4), (3,3), (4,2), (5,1)',
                 '26² × 10³ = 676,000 plates',
-                '8 × 8 = 64 outcomes'
+                '8 × 8 = 64 outcomes (each draw has 8 equally likely outcomes: 5 red + 3 green = 8)'
             ]
         );
 
         // 2. Probability of an event using sample space, rules
         addTopic(
             '2. Calculating Probability of an event using sample space, rules',
-            'P(A) = |A| / |S|. Addition rule: P(A∪B) = P(A) + P(B) − P(A∩B). Complement rule: P(Aᶜ) = 1 − P(A). For equally likely outcomes, count favorable outcomes.',
-            'Example: Roll two dice. S has 36 outcomes. A = {sum = 7} has 6 outcomes → P(A) = 6/36 = 1/6.',
+            'P(A) = |A| / |S|. Addition rule: P(A∪B) = P(A) + P(B) − P(A∩B). Complement rule: P(Aᶜ) = 1 − P(A). <br><br><div class="important-box"><strong>⚠️ CRITICAL:</strong> The formula P(A) = |A|/|S| is ONLY valid when the sample space consists of equally likely outcomes. If the outcomes are not equally likely, the sample space alone does not determine probabilities, leading to ambiguity.</div>',
+            'Example: Roll two dice. S has 36 equally likely outcomes. A = {sum = 7} has 6 outcomes → P(A) = 6/36 = 1/6.',
             [
                 'Two dice are rolled. What is P(sum = 7)?',
                 'Draw a card from a deck. P(heart or face card)? (face = J,Q,K)',
@@ -916,6 +940,9 @@
         console.log(`📡 Web App URL: ${WEB_APP_URL}`);
         console.log('✅ No passwords are hardcoded in this HTML file.');
         console.log('💡 Each topic has its own password in the Google Sheet!');
+        console.log('📌 Topic 1, Question 5 demonstrates equally likely outcomes with replacement.');
+        console.log('⚠️ If equally likely outcomes are not assumed, the sample space becomes ambiguous.');
+        console.log('💡 Solutions are hidden by default. Click "Show Solution" to reveal each answer.');
     })();
 </script>
 </body>
