@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics · 16 topics · review + examples + problems</title>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -267,13 +279,6 @@
             color: #047857;
             margin-right: 0.5rem;
         }
-        .solution-hidden-note {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            font-style: italic;
-            margin-left: 2.2rem;
-            margin-top: 0.2rem;
-        }
         .badge-mc {
             background: #dbeafe;
             color: #1e4a8b;
@@ -309,6 +314,26 @@
             .btn { width: 100%; }
             .problem-actions { flex-wrap: wrap; }
         }
+        /* MathJax display */
+        mjx-container {
+            display: inline-block;
+            margin: 0;
+        }
+        .problem-text mjx-container {
+            display: inline;
+        }
+        .math-block mjx-container {
+            display: block;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+        select option {
+            padding: 4px 8px;
+        }
+        .math-title {
+            font-family: 'Times New Roman', 'STIX', 'Latin Modern Math', serif;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -326,14 +351,12 @@
         </div>
     </div>
 
-    <!-- Review panel -->
     <div id="reviewPanel" class="review-box">
         <h3>📘 Review <span id="topicBadge">topic 1</span> <span class="lock-icon" id="lockIcon">🔒</span></h3>
         <div id="reviewContent">Select a topic, enter the password, and click Unlock to see the review with examples and problems.</div>
         <div id="debugInfo" class="debug-info"></div>
     </div>
 
-    <!-- Problems -->
     <div class="problems-section">
         <h2>📝 Problems <span id="problemCount">0</span> <span id="lockStatusBadge" style="font-size:0.7rem;background:#e2e8f0;padding:0.1rem 0.7rem;border-radius:20px;">locked</span></h2>
         <div id="problemsContainer">
@@ -347,9 +370,7 @@
 
 <script>
     (function() {
-        // ----- Configuration --------------------------------------------
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz1p258Ubrf0lM_FybsZ_kuTWP_e_ADx_-dBx08tDw8sEmmOuPVmyj6cQqtaKnQa3hT/exec';
-        
         const debugEl = document.getElementById('debugInfo');
         
         function logDebug(message, data = null) {
@@ -365,165 +386,161 @@
             }
         }
         
-        // ----- TOPIC DATA: review with examples, solutions for problems --
         const TOPICS = [];
 
         function addTopic(title, reviewText, exampleText, problems, solutions, mc = false) {
-            TOPICS.push({ title, review: reviewText, example: exampleText, problems, solutions, mc });
+            let cleanReview = reviewText;
+            if (cleanReview.endsWith('Example:')) {
+                cleanReview = cleanReview.slice(0, -8);
+            }
+            TOPICS.push({ title, review: cleanReview, example: exampleText, problems, solutions, mc });
         }
 
-        // 1. Experiment, sample space, event, multiplicative counting
+        // Use Unicode x̄ directly for topic 16 title
         addTopic(
             '1. Experiment, sample space, event, multiplicative counting',
-            'An experiment is any procedure with observable outcomes. The sample space (S) is the set of all possible outcomes. An event is a subset of S. The multiplicative counting principle: if an operation has m outcomes and a second has n, the total is m × n. <br><br><div class="important-box"><strong>⚠️ IMPORTANT:</strong> If equally likely outcomes are NOT assumed, then there will be ambiguity regarding the sample space. Different probability models could assign different probabilities to the same outcomes. The formula P(A) = |A|/|S| ONLY works when all outcomes in S are equally likely.</div>',
-            'Example: Tossing a coin twice → S = {HH, HT, TH, TT}, |S| = 2×2 = 4. Event A = {at least one head} = {HH, HT, TH}. Each outcome is equally likely with probability 1/4. Therefore, P(A) = 3/4.',
+            'An experiment is any procedure with observable outcomes. The sample space (S) is the set of all possible outcomes. An event is a subset of S. The multiplicative counting principle: if an operation has \\(m\\) outcomes and a second has \\(n\\), the total is \\(m \\times n\\).<br><br><div class="important-box"><strong>⚠️ IMPORTANT:</strong> If equally likely outcomes are NOT assumed, then there will be ambiguity regarding the sample space. Different probability models could assign different probabilities to the same outcomes. The formula \\(P(A) = |A|/|S|\\) ONLY works when all outcomes in S are equally likely.</div>',
+            'Tossing a coin twice → \\(S = \\{HH, HT, TH, TT\\}\\), \\(|S| = 2 \\times 2 = 4\\). Event A = {at least one head} = {HH, HT, TH}. Each outcome is equally likely with probability \\(1/4\\). Therefore, \\(P(A) = 3/4\\).',
             [
                 'Roll a 4-sided die and a 6-sided die. How many outcomes in the sample space?',
                 'A coin is tossed 3 times. How many outcomes?',
                 'Event A = {sum of two dice is 6}. How many outcomes in A?',
                 'A license plate has 2 letters (A-Z) and 3 digits (0-9). How many plates?',
-                'A bag has 5 red marbles and 3 green marbles. You draw two marbles with replacement (put the first marble back before drawing the second). How many outcomes are in the sample space? <br><br><span style="color:#991b1b;font-weight:500;">💡 Key Concept:</span> Each draw has 8 equally likely outcomes, and with replacement, the total number of equally likely outcomes is 8 × 8 = 64. <span style="color:#991b1b;font-weight:500;">Without the equally likely assumption, the sample space would be ambiguous.</span>'
+                'A bag has 5 red marbles and 3 green marbles. You draw two marbles with replacement (put the first marble back before drawing the second). How many outcomes are in the sample space? <br><br><span style="color:#991b1b;font-weight:500;">💡 Key Concept:</span> Each draw has 8 equally likely outcomes, and with replacement, the total number of equally likely outcomes is \\(8 \\times 8 = 64\\). <span style="color:#991b1b;font-weight:500;">Without the equally likely assumption, the sample space would be ambiguous.</span>'
             ],
             [
-                '4 × 6 = 24 outcomes',
-                '2³ = 8 outcomes',
+                '\\(4 \\times 6 = 24\\) outcomes',
+                '\\(2^3 = 8\\) outcomes',
                 'There are 5 outcomes: (1,5), (2,4), (3,3), (4,2), (5,1)',
-                '26² × 10³ = 676,000 plates',
-                '8 × 8 = 64 outcomes (each draw has 8 equally likely outcomes: 5 red + 3 green = 8)'
+                '\\(26^2 \\times 10^3 = 676,000\\) plates',
+                '\\(8 \\times 8 = 64\\) outcomes (each draw has 8 equally likely outcomes: 5 red + 3 green = 8)'
             ]
         );
 
-        // 2. Probability of an event using sample space, rules
         addTopic(
             '2. Calculating Probability of an event using sample space, rules',
-            'P(A) = |A| / |S|. Addition rule: P(A∪B) = P(A) + P(B) − P(A∩B). Complement rule: P(Aᶜ) = 1 − P(A). <br><br><div class="important-box"><strong>⚠️ CRITICAL:</strong> The formula P(A) = |A|/|S| is ONLY valid when the sample space consists of equally likely outcomes. If the outcomes are not equally likely, the sample space alone does not determine probabilities, leading to ambiguity.</div>',
-            'Example: Roll two dice. S has 36 equally likely outcomes. A = {sum = 7} has 6 outcomes → P(A) = 6/36 = 1/6.',
+            '\\(P(A) = |A| / |S|\\). Addition rule: \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\). Complement rule: \\(P(A^c) = 1 - P(A)\\).<br><br><div class="important-box"><strong>⚠️ CRITICAL:</strong> The formula \\(P(A) = |A|/|S|\\) is ONLY valid when the sample space consists of equally likely outcomes. If the outcomes are not equally likely, the sample space alone does not determine probabilities, leading to ambiguity.</div>',
+            'Roll two dice. S has 36 equally likely outcomes. A = {sum = 7} has 6 outcomes → \\(P(A) = 6/36 = 1/6\\).',
             [
-                'Two dice are rolled. What is P(sum = 7)?',
-                'Draw a card from a deck. P(heart or face card)? (face = J,Q,K)',
-                'P(A)=0.5, P(B)=0.4, P(A∩B)=0.2. Find P(A∪B).',
-                'Roll a die: P(prime number) ?',
-                'From a deck, P(red and ace) ?'
+                'Two dice are rolled. What is \\(P(\\text{sum} = 7)\\)?',
+                'Draw a card from a deck. \\(P(\\text{heart or face card})\\)? (face = J,Q,K)',
+                '\\(P(A)=0.5, P(B)=0.4, P(A \\cap B)=0.2\\). Find \\(P(A \\cup B)\\).',
+                'Roll a die: \\(P(\\text{prime number})\\) ?',
+                'From a deck, \\(P(\\text{red and ace})\\) ?'
             ],
             [
-                '6/36 = 1/6 ≈ 0.1667',
-                'P(heart) = 13/52, P(face) = 12/52, P(heart ∩ face) = 3/52 → (13+12-3)/52 = 22/52 = 11/26',
-                '0.5 + 0.4 − 0.2 = 0.7',
-                'Prime numbers: 2,3,5 → 3/6 = 1/2',
-                '2 red aces (A♥, A♦) → 2/52 = 1/26'
+                '\\(6/36 = 1/6 \\approx 0.1667\\)',
+                '\\(P(\\text{heart}) = 13/52, P(\\text{face}) = 12/52, P(\\text{heart} \\cap \\text{face}) = 3/52 \\rightarrow (13+12-3)/52 = 22/52 = 11/26\\)',
+                '\\(0.5 + 0.4 - 0.2 = 0.7\\)',
+                'Prime numbers: 2,3,5 → \\(3/6 = 1/2\\)',
+                '2 red aces (A♥, A♦) → \\(2/52 = 1/26\\)'
             ]
         );
 
-        // 3. Disjoint events and independent events
         addTopic(
             '3. Disjoint events and independent events',
-            'Disjoint (mutually exclusive) events have no common outcomes: P(A∩B)=0. Independent events: P(A∩B)=P(A)P(B). If disjoint and both have positive probability, they cannot be independent.',
-            'Example: Roll a die. A={1,2}, B={3,4} are disjoint. P(A)=1/3, P(B)=1/3, P(A∩B)=0. Independent? No, because 0 ≠ 1/9.',
+            'Disjoint (mutually exclusive) events have no common outcomes: \\(P(A \\cap B)=0\\). Independent events: \\(P(A \\cap B)=P(A)P(B)\\). If disjoint and both have positive probability, they cannot be independent.',
+            'Roll a die. A={1,2}, B={3,4} are disjoint. \\(P(A)=1/3, P(B)=1/3, P(A \\cap B)=0\\). Independent? No, because \\(0 \\neq 1/9\\).',
             [
-                'P(A)=0.3, P(B)=0.5, disjoint. P(A∪B) ?',
-                'P(A)=0.4, P(B)=0.2, independent. P(A∩B)?',
-                'If independent, P(A|B) = P(A). Given P(A)=0.7, P(B)=0.3, find P(A|B).',
+                '\\(P(A)=0.3, P(B)=0.5\\), disjoint. \\(P(A \\cup B)\\) ?',
+                '\\(P(A)=0.4, P(B)=0.2\\), independent. \\(P(A \\cap B)\\)?',
+                'If independent, \\(P(A|B) = P(A)\\). Given \\(P(A)=0.7, P(B)=0.3\\), find \\(P(A|B)\\).',
                 'Can two disjoint events be independent? (yes/no)',
-                'P(A)=0.2, P(B)=0.4, P(A∩B)=0.08. Are they independent?'
+                '\\(P(A)=0.2, P(B)=0.4, P(A \\cap B)=0.08\\). Are they independent?'
             ],
             [
-                '0.3 + 0.5 = 0.8',
-                '0.4 × 0.2 = 0.08',
-                'P(A|B) = P(A) = 0.7',
+                '\\(0.3 + 0.5 = 0.8\\)',
+                '\\(0.4 \\times 0.2 = 0.08\\)',
+                '\\(P(A|B) = P(A) = 0.7\\)',
                 'No (unless one has probability 0)',
-                'Yes: 0.2 × 0.4 = 0.08 ✓'
+                'Yes: \\(0.2 \\times 0.4 = 0.08\\) ✓'
             ]
         );
 
-        // 4. Total probability and Bayes
         addTopic(
             '4. Total probability formula and Bayes formula',
-            'Total probability: P(A) = Σ P(A|Bᵢ)P(Bᵢ). Bayes: P(Bᵢ|A) = P(A|Bᵢ)P(Bᵢ) / P(A). Used when we have a partition of the sample space.',
-            'Example: Two machines produce 40% and 60% of items. Defect rates 2% and 5%. P(defect) = 0.4×0.02 + 0.6×0.05 = 0.038.',
+            'Total probability: \\(P(A) = \\sum P(A|B_i)P(B_i)\\). Bayes: \\(P(B_i|A) = \\frac{P(A|B_i)P(B_i)}{P(A)}\\). Used when we have a partition of the sample space.',
+            'Two machines produce 40% and 60% of items. Defect rates 2% and 5%. \\(P(\\text{defect}) = 0.4 \\times 0.02 + 0.6 \\times 0.05 = 0.038\\).',
             [
-                'P(A|B1)=0.4, P(A|B2)=0.7, P(B1)=0.6, P(B2)=0.4. Find P(A).',
+                '\\(P(A|B_1)=0.4, P(A|B_2)=0.7, P(B_1)=0.6, P(B_2)=0.4\\). Find \\(P(A)\\).',
                 'Two machines: M1 makes 40% with 3% defect, M2 makes 60% with 5% defect. Overall defect rate?',
-                'Bayes: P(B1)=0.3, P(A|B1)=0.9, P(A|B2)=0.2, P(B2)=0.7. Find P(B1|A).',
-                'Test sensitivity 95%, specificity 90%, prevalence 2%. P(disease | positive)?',
-                'Urn1: 2R,3B; Urn2: 4R,1B. Pick urn at random, draw R. P(Urn1 | R)?'
+                'Bayes: \\(P(B_1)=0.3, P(A|B_1)=0.9, P(A|B_2)=0.2, P(B_2)=0.7\\). Find \\(P(B_1|A)\\).',
+                'Test sensitivity 95%, specificity 90%, prevalence 2%. \\(P(\\text{disease} | \\text{positive})\\)?',
+                'Urn1: 2R,3B; Urn2: 4R,1B. Pick urn at random, draw R. \\(P(\\text{Urn1} | R)\\)?'
             ],
             [
-                '0.4×0.6 + 0.7×0.4 = 0.24 + 0.28 = 0.52',
-                '0.4×0.03 + 0.6×0.05 = 0.012 + 0.03 = 0.042 = 4.2%',
-                'P(A) = 0.9×0.3 + 0.2×0.7 = 0.27 + 0.14 = 0.41 → 0.27/0.41 ≈ 0.6585',
-                'P(disease|+) = (0.95×0.02)/(0.95×0.02 + 0.10×0.98) = 0.019/0.117 ≈ 0.1624',
-                'P(R) = 0.5×0.4 + 0.5×0.8 = 0.2 + 0.4 = 0.6 → P(Urn1|R) = 0.2/0.6 = 1/3'
+                '\\(0.4 \\times 0.6 + 0.7 \\times 0.4 = 0.24 + 0.28 = 0.52\\)',
+                '\\(0.4 \\times 0.03 + 0.6 \\times 0.05 = 0.012 + 0.03 = 0.042 = 4.2%\\)',
+                '\\(P(A) = 0.9 \\times 0.3 + 0.2 \\times 0.7 = 0.27 + 0.14 = 0.41 \\rightarrow 0.27/0.41 \\approx 0.6585\\)',
+                '\\(P(\\text{disease}|+) = \\frac{0.95 \\times 0.02}{0.95 \\times 0.02 + 0.10 \\times 0.98} = 0.019/0.117 \\approx 0.1624\\)',
+                '\\(P(R) = 0.5 \\times 0.4 + 0.5 \\times 0.8 = 0.2 + 0.4 = 0.6 \\rightarrow P(\\text{Urn1}|R) = 0.2/0.6 = 1/3\\)'
             ]
         );
 
-        // 5. Discrete RVs, PMF, CDF, mean, sd, Binomial, Geometric, Poisson
         addTopic(
             '5. Discrete RVs · PMF · CDF · mean · sd · Binomial, Geometric, Poisson',
-            'PMF: P(X=x). E[X] = Σ x·p(x). Var(X) = E[X²] − μ². Binomial: P(X=k) = C(n,k)pᵏ(1−p)ⁿ⁻ᵏ. Geometric: P(X=k) = (1−p)ᵏ⁻¹p. Poisson: P(X=k) = e⁻λ λᵏ/k!.',
-            'Example: Binomial(n=10, p=0.3). P(X=3) = C(10,3)(0.3)³(0.7)⁷. E[X] = np = 3.',
+            'PMF: \\(P(X=x)\\). \\(E[X] = \\sum x p(x)\\). \\(\\text{Var}(X) = E[X^2] - \\mu^2\\). Binomial: \\(P(X=k) = \\binom{n}{k} p^k (1-p)^{n-k}\\). Geometric: \\(P(X=k) = (1-p)^{k-1}p\\). Poisson: \\(P(X=k) = e^{-\\lambda} \\lambda^k / k!\\).',
+            'Binomial(\\(n=10, p=0.3\\)). \\(P(X=3) = \\binom{10}{3}(0.3)^3(0.7)^7\\). \\(E[X] = np = 3\\).',
             [
-                'X: P(1)=0.1, P(2)=0.4, P(3)=0.5. Find E[X].',
-                'From above, find Var(X).',
-                'Binomial(n=8, p=0.4): P(X=3) (formula)',
-                'Geometric(p=0.3): P(first success on 5th trial) ?',
-                'Poisson(λ=3): P(X=2) ?'
+                'X: P(1)=0.1, P(2)=0.4, P(3)=0.5. Find \\(E[X]\\).',
+                'From above, find \\(\\text{Var}(X)\\).',
+                'Binomial(\\(n=8, p=0.4\\)): \\(P(X=3)\\) (formula)',
+                'Geometric(\\(p=0.3\\)): \\(P(\\text{first success on 5th trial})\\) ?',
+                'Poisson(\\(\\lambda=3\\)): \\(P(X=2)\\) ?'
             ],
             [
-                'E[X] = 1×0.1 + 2×0.4 + 3×0.5 = 0.1 + 0.8 + 1.5 = 2.4',
-                'E[X²] = 1×0.1 + 4×0.4 + 9×0.5 = 0.1 + 1.6 + 4.5 = 6.2 → Var = 6.2 − 2.4² = 6.2 − 5.76 = 0.44',
-                'C(8,3)(0.4)³(0.6)⁵ = 56 × 0.064 × 0.07776 ≈ 0.2787',
-                'P(X=5) = (0.7)⁴ × 0.3 = 0.2401 × 0.3 = 0.07203',
-                'P(X=2) = e⁻³ × 3²/2! = e⁻³ × 9/2 ≈ 0.2240'
+                '\\(E[X] = 1 \\times 0.1 + 2 \\times 0.4 + 3 \\times 0.5 = 0.1 + 0.8 + 1.5 = 2.4\\)',
+                '\\(E[X^2] = 1 \\times 0.1 + 4 \\times 0.4 + 9 \\times 0.5 = 0.1 + 1.6 + 4.5 = 6.2 \\rightarrow \\text{Var} = 6.2 - 2.4^2 = 6.2 - 5.76 = 0.44\\)',
+                '\\(\\binom{8}{3}(0.4)^3(0.6)^5 = 56 \\times 0.064 \\times 0.07776 \\approx 0.2787\\)',
+                '\\(P(X=5) = (0.7)^4 \\times 0.3 = 0.2401 \\times 0.3 = 0.07203\\)',
+                '\\(P(X=2) = e^{-3} \\times 3^2/2! = e^{-3} \\times 9/2 \\approx 0.2240\\)'
             ]
         );
 
-        // 6. Continuous RVs, densities, mean, sd, Uniform, Exponential, Normal
         addTopic(
             '6. Continuous RVs · densities · mean · sd · Uniform, Exponential, Normal',
-            'Uniform(a,b): f(x)=1/(b−a), mean=(a+b)/2, var=(b−a)²/12. Exponential(λ): f(x)=λe⁻λx, mean=1/λ, sd=1/λ. Normal(μ,σ): symmetric bell curve; 68% within ±1σ.',
-            'Example: Uniform(0,10): P(X<3) = 3/10 = 0.3. Mean = 5, variance = 100/12 ≈ 8.33.',
+            'Uniform(\\(a,b\\)): \\(f(x) = 1/(b-a)\\), mean \\(= (a+b)/2\\), var \\(= (b-a)^2/12\\). Exponential(\\(\\lambda\\)): \\(f(x) = \\lambda e^{-\\lambda x}\\), mean \\(= 1/\\lambda\\), sd \\(= 1/\\lambda\\). Normal(\\(\\mu,\\sigma\\)): symmetric bell curve; 68% within \\(\\pm 1\\sigma\\).',
+            'Uniform(0,10): \\(P(X<3) = 3/10 = 0.3\\). Mean = 5, variance = 100/12 ≈ 8.33.',
             [
-                'Uniform(0,12): P(X<4) ?',
+                'Uniform(0,12): \\(P(X<4)\\) ?',
                 'Uniform(0,20): mean and variance?',
-                'Exponential(λ=3): P(X>2) ?',
-                'Normal(μ=100, σ=15): P(85<X<115) approx? (68%)',
-                'Exponential(λ=0.4): mean and sd?'
+                'Exponential(\\(\\lambda=3\\)): \\(P(X>2)\\) ?',
+                'Normal(\\(\\mu=100, \\sigma=15\\)): \\(P(85<X<115)\\) approx? (68%)',
+                'Exponential(\\(\\lambda=0.4\\)): mean and sd?'
             ],
             [
-                '4/12 = 1/3 ≈ 0.333',
+                '\\(4/12 = 1/3 \\approx 0.333\\)',
                 'Mean = 10, Variance = 400/12 ≈ 33.33',
-                'P(X>2) = e⁻⁶ ≈ 0.00248',
-                'P(μ−σ < X < μ+σ) ≈ 0.68 = 68%',
-                'Mean = 1/0.4 = 2.5, SD = 2.5'
+                '\\(P(X>2) = e^{-6} \\approx 0.00248\\)',
+                '\\(P(\\mu-\\sigma < X < \\mu+\\sigma) \\approx 0.68 = 68%\\)',
+                'Mean = \\(1/0.4 = 2.5\\), SD = 2.5'
             ]
         );
 
-        // 7. Joint distributions, marginal, covariance, correlation
         addTopic(
             '7. Joint distributions of two discrete RVs · marginal · covariance · correlation',
-            'Joint PMF P(X=x, Y=y). Marginal: P(X=x) = Σ_y P(x,y). Cov(X,Y) = E[XY] − E[X]E[Y]. Correlation ρ = Cov/(σxσy). Independent → covariance = 0.',
-            'Example: Joint P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4. Marginal P(X=1) = 0.2+0.1 = 0.3.',
+            'Joint PMF \\(P(X=x, Y=y)\\). Marginal: \\(P(X=x) = \\sum_y P(x,y)\\). \\(\\text{Cov}(X,Y) = E[XY] - E[X]E[Y]\\). Correlation \\(\\rho = \\frac{\\text{Cov}}{\\sigma_x \\sigma_y}\\). Independent → covariance = 0.',
+            'Joint \\(P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4\\). Marginal \\(P(X=1) = 0.2+0.1 = 0.3\\).',
             [
-                'Joint: P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4. Marginal P(X=1)?',
-                'From above, find E[X].',
-                'Covariance formula involves E[XY] and ____.',
+                'Joint: P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4. Marginal \\(P(X=1)\\)?',
+                'From above, find \\(E[X]\\).',
+                'Covariance formula involves \\(E[XY]\\) and ____.',
                 'Correlation coefficient is between -1 and ____.',
                 'If X,Y independent, covariance = ____.'
             ],
             [
-                'P(X=1) = 0.2 + 0.1 = 0.3',
-                'E[X] = 1×0.3 + 2×0.7 = 0.3 + 1.4 = 1.7',
-                'E[X]E[Y]',
-                '+1',
+                '\\(P(X=1) = 0.2 + 0.1 = 0.3\\)',
+                '\\(E[X] = 1 \\times 0.3 + 2 \\times 0.7 = 0.3 + 1.4 = 1.7\\)',
+                '\\(E[X]E[Y]\\)',
+                '\\(+1\\)',
                 '0'
             ]
         );
 
-        // 8. Population, sample, parameter, statistic, bias, plots
         addTopic(
-            '8. Population, sample, parameter, statistic, bias, mean, median, 5-number summary, plots',
-            'Population: entire group. Sample: subset. Parameter: numerical summary of population. Statistic: summary of sample. Unbiased: E[statistic] = parameter. 5-number: min, Q1, median, Q3, max. Bar/pie for categorical; histogram/boxplot for quantitative; scatterplot for bivariate.',
-            'Example: Sample mean x̄ is a statistic; population mean μ is a parameter. A boxplot shows the 5-number summary visually.',
+            '8. Population, sample, parameter, statistic, bias, plots',
+            'Population: entire group. Sample: subset. Parameter: numerical summary of population. Statistic: summary of sample. Unbiased: \\(E[\\text{statistic}] = \\text{parameter}\\). 5-number: min, Q1, median, Q3, max. Bar/pie for categorical; histogram/boxplot for quantitative; scatterplot for bivariate.',
+            'Sample mean \\(\\bar{x}\\) is a statistic; population mean \\(\\mu\\) is a parameter. A boxplot shows the 5-number summary visually.',
             [
                 'Sample mean is a _____ (parameter/statistic)',
                 'An estimator is unbiased if its expected value equals the _____.',
@@ -540,83 +557,79 @@
             ]
         );
 
-        // 9. CI and test for population proportion
         addTopic(
             '9. Confidence interval of a population proportion · test of hypothesis',
-            'CI for p: p̂ ± z*√(p̂(1−p̂)/n). Test: z = (p̂ − p₀) / √(p₀(1−p₀)/n). Sample size condition: np̂ ≥ 10 and n(1−p̂) ≥ 10.',
-            'Example: n=100, x=40, p̂=0.4. 95% CI: 0.4 ± 1.96√(0.4×0.6/100) = (0.304, 0.496).',
+            'CI for \\(p\\): \\(\\hat{p} \\pm z^* \\sqrt{\\hat{p}(1-\\hat{p})/n}\\). Test: \\(z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}\\). Sample size condition: \\(n\\hat{p} \\ge 10\\) and \\(n(1-\\hat{p}) \\ge 10\\).',
+            '\\(n=100, x=40, \\hat{p}=0.4\\). 95% CI: \\(0.4 \\pm 1.96\\sqrt{0.4 \\times 0.6/100} = (0.304, 0.496)\\).',
             [
-                'n=150, x=60, 95% CI for p (z=1.96 approx)',
-                'H0: p=0.4 vs Ha: p>0.4, n=200, x=100. z-stat?',
+                '\\(n=150, x=60\\), 95% CI for \\(p\\) (\\(z=1.96\\) approx)',
+                '\\(H_0: p=0.4\\) vs \\(H_a: p>0.4, n=200, x=100\\). z-stat?',
                 'Increasing n makes the CI ____ (narrower/wider).',
-                'p̂=0.7, n=100, standard error?',
+                '\\(\\hat{p}=0.7, n=100\\), standard error?',
                 'A 99% CI is wider than 95% CI: true/false?'
             ],
             [
-                'p̂ = 60/150 = 0.4, SE = √(0.4×0.6/150) = 0.04, CI = 0.4 ± 1.96×0.04 = (0.322, 0.478)',
-                'p̂ = 100/200 = 0.5, z = (0.5 − 0.4)/√(0.4×0.6/200) = 0.1/0.0346 ≈ 2.89',
+                '\\(\\hat{p} = 60/150 = 0.4\\), SE = \\(\\sqrt{0.4 \\times 0.6/150} = 0.04\\), CI = \\(0.4 \\pm 1.96 \\times 0.04 = (0.322, 0.478)\\)',
+                '\\(\\hat{p} = 100/200 = 0.5\\), \\(z = (0.5 - 0.4)/\\sqrt{0.4 \\times 0.6/200} = 0.1/0.0346 \\approx 2.89\\)',
                 'narrower',
-                'SE = √(0.7×0.3/100) = √0.0021 ≈ 0.0458',
+                'SE = \\(\\sqrt{0.7 \\times 0.3/100} = \\sqrt{0.0021} \\approx 0.0458\\)',
                 'true'
             ]
         );
 
-        // 10. CI and test for difference between two proportions
         addTopic(
             '10. CI & test for difference between two proportions',
-            'CI for p₁−p₂: (p̂₁−p̂₂) ± z√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂). Test uses pooled proportion p̂ = (x₁+x₂)/(n₁+n₂).',
-            'Example: p̂₁=0.6, n₁=100, p̂₂=0.5, n₂=100. SE = √(0.6×0.4/100 + 0.5×0.5/100) = 0.0707.',
+            'CI for \\(p_1-p_2\\): \\((\\hat{p}_1-\\hat{p}_2) \\pm z \\sqrt{\\hat{p}_1(1-\\hat{p}_1)/n_1 + \\hat{p}_2(1-\\hat{p}_2)/n_2}\\). Test uses pooled proportion \\(\\hat{p} = (x_1+x_2)/(n_1+n_2)\\).',
+            '\\(\\hat{p}_1=0.6, n_1=100, \\hat{p}_2=0.5, n_2=100\\). SE = \\(\\sqrt{0.6 \\times 0.4/100 + 0.5 \\times 0.5/100} = 0.0707\\).',
             [
-                'p̂1=0.6, n1=120, p̂2=0.5, n2=120. SE for difference?',
+                '\\(\\hat{p}_1=0.6, n_1=120, \\hat{p}_2=0.5, n_2=120\\). SE for difference?',
                 'In hypothesis test for difference, we use _____ proportion.',
                 'If CI for difference contains 0, we conclude ______.',
-                'Condition: n₁p̂₁, n₁(1−p̂₁), n₂p̂₂, n₂(1−p̂₂) all ≥ ____.',
-                'p1=0.55, p2=0.45, n1=n2=100. approximate z-stat?'
+                'Condition: \\(n_1\\hat{p}_1, n_1(1-\\hat{p}_1), n_2\\hat{p}_2, n_2(1-\\hat{p}_2)\\) all ≥ ____.',
+                '\\(p_1=0.55, p_2=0.45, n_1=n_2=100\\). approximate z-stat?'
             ],
             [
-                'SE = √(0.6×0.4/120 + 0.5×0.5/120) = √(0.002 + 0.00208) = √0.00408 ≈ 0.0639',
+                'SE = \\(\\sqrt{0.6 \\times 0.4/120 + 0.5 \\times 0.5/120} = \\sqrt{0.002 + 0.00208} = \\sqrt{0.00408} \\approx 0.0639\\)',
                 'pooled',
                 'no significant difference',
                 '5 or 10 (usually 5)',
-                'p̂ = (55+45)/200 = 0.5, z = (0.55−0.45)/√(0.5×0.5×2/100) = 0.1/0.0707 ≈ 1.414'
+                '\\(\\hat{p} = (55+45)/200 = 0.5\\), \\(z = (0.55-0.45)/\\sqrt{0.5 \\times 0.5 \\times 2/100} = 0.1/0.0707 \\approx 1.414\\)'
             ]
         );
 
-        // 11. CI and test for population mean
         addTopic(
             '11. Confidence interval & test for a population mean',
-            'CI: x̄ ± t* s/√n (or z if σ known). Test: t = (x̄ − μ₀)/(s/√n). Use t-distribution with df = n−1 when σ unknown.',
-            'Example: x̄=50, s=10, n=25. 95% CI: 50 ± 2.064×10/5 = (45.87, 54.13).',
+            'CI: \\(\\bar{x} \\pm t^* \\frac{s}{\\sqrt{n}}\\) (or \\(z\\) if \\(\\sigma\\) known). Test: \\(t = \\frac{\\bar{x} - \\mu_0}{s/\\sqrt{n}}\\). Use t-distribution with df = n−1 when \\(\\sigma\\) unknown.',
+            '\\(\\bar{x}=50, s=10, n=25\\). 95% CI: \\(50 \\pm 2.064 \\times 10/5 = (45.87, 54.13)\\).',
             [
-                'x̄=42, s=8, n=25, 95% CI (use t₀.₀₂₅≈2.064)',
-                'When σ unknown, use _____ distribution.',
-                'H0: μ=50, Ha: μ≠50, x̄=53, s=10, n=30. t-stat?',
+                '\\(\\bar{x}=42, s=8, n=25\\), 95% CI (use \\(t_{0.025} \\approx 2.064\\))',
+                'When \\(\\sigma\\) unknown, use _____ distribution.',
+                '\\(H_0: \\mu=50, H_a: \\mu \\neq 50, \\bar{x}=53, s=10, n=30\\). t-stat?',
                 '90% CI is narrower than 95% CI: true/false?',
                 'For large n, t and z are approximately equal: true?'
             ],
             [
-                'SE = 8/√25 = 1.6, CI = 42 ± 2.064×1.6 = (38.70, 45.30)',
+                'SE = \\(8/\\sqrt{25} = 1.6\\), CI = \\(42 \\pm 2.064 \\times 1.6 = (38.70, 45.30)\\)',
                 't',
-                't = (53−50)/(10/√30) = 3/1.826 = 1.643',
+                '\\(t = (53-50)/(10/\\sqrt{30}) = 3/1.826 = 1.643\\)',
                 'true',
                 'true'
             ]
         );
 
-        // 12. CI and test for difference between two means
         addTopic(
             '12. CI & test for difference between two means',
-            'Two-sample t: (x̄₁−x̄₂) ± t*√(s₁²/n₁ + s₂²/n₂). Pooled when variances equal. Paired t-test for dependent samples.',
-            'Example: x̄₁=30, s₁=5, n₁=25; x̄₂=28, s₂=6, n₂=25. SE = √(25/25 + 36/25) = √(2.44) = 1.56.',
+            'Two-sample t: \\((\\bar{x}_1-\\bar{x}_2) \\pm t^* \\sqrt{s_1^2/n_1 + s_2^2/n_2}\\). Pooled when variances equal. Paired t-test for dependent samples.',
+            '\\(\\bar{x}_1=30, s_1=5, n_1=25; \\bar{x}_2=28, s_2=6, n_2=25\\). SE = \\(\\sqrt{25/25 + 36/25} = \\sqrt{2.44} = 1.56\\).',
             [
-                'x̄1=30, s1=5, n1=25; x̄2=28, s2=6, n2=25. SE difference?',
+                '\\(\\bar{x}_1=30, s_1=5, n_1=25; \\bar{x}_2=28, s_2=6, n_2=25\\). SE difference?',
                 'Pooled variance is used when we assume ____ variances.',
                 'Paired t-test is used for ____ samples.',
-                'If p-value < 0.05 for H0: μ1=μ2, we reject H0: true/false?',
-                'CI for μ1−μ2 includes 0 → no significant difference. True?'
+                'If p-value < 0.05 for \\(H_0: \\mu_1=\\mu_2\\), we reject H0: true/false?',
+                'CI for \\(\\mu_1-\\mu_2\\) includes 0 → no significant difference. True?'
             ],
             [
-                'SE = √(25/25 + 36/25) = √(1 + 1.44) = √2.44 ≈ 1.562',
+                'SE = \\(\\sqrt{25/25 + 36/25} = \\sqrt{1 + 1.44} = \\sqrt{2.44} \\approx 1.562\\)',
                 'equal',
                 'dependent/paired',
                 'true',
@@ -624,11 +637,10 @@
             ]
         );
 
-        // 13. Chi-square test for GOF and independence
         addTopic(
             '13. Chi-square test for GOF and independence',
-            'GOF: Σ (O−E)²/E. df = categories − 1. Independence: df = (r−1)(c−1). Expected counts ≥ 5. Large χ² → small p-value → reject H₀.',
-            'Example: GOF with 4 categories, df=3. Independence test for 2×3 table, df=(2−1)(3−1)=2.',
+            'GOF: \\(\\sum \\frac{(O-E)^2}{E}\\). df = categories − 1. Independence: df = \\((r-1)(c-1)\\). Expected counts ≥ 5. Large \\(\\chi^2\\) → small p-value → reject \\(H_0\\).',
+            'GOF with 4 categories, df=3. Independence test for 2×3 table, df=(2−1)(3−1)=2.',
             [
                 'GOF with 6 categories, df = ?',
                 'Independence test for 4x5 table, df = ?',
@@ -638,18 +650,17 @@
             ],
             [
                 'df = 5',
-                '(4−1)(5−1) = 3×4 = 12',
+                '\\((4-1)(5-1) = 3 \\times 4 = 12\\)',
                 '5',
                 'true',
                 'expected/probability'
             ]
         );
 
-        // 14. ANOVA (MC)
         addTopic(
             '14. 1-way ANOVA (multiple choice)',
-            'ANOVA compares means of 3+ groups. F = MSB/MSW. Assumptions: normality, equal variances, independence. H₀: all means equal.',
-            'Example: 4 groups, each with 10 observations. df numerator = 3, df denominator = 36. F = MSB/MSW.',
+            'ANOVA compares means of 3+ groups. \\(F = \\text{MSB}/\\text{MSW}\\). Assumptions: normality, equal variances, independence. \\(H_0\\): all means equal.',
+            '4 groups, each with 10 observations. df numerator = 3, df denominator = 36. \\(F = \\text{MSB}/\\text{MSW}\\).',
             [
                 'ANOVA compares means of (a) 2 groups (b) 3+ groups (c) paired data',
                 'F-statistic = MSB/MSW. MSB measures (a) within-group (b) between-group (c) total',
@@ -667,17 +678,16 @@
             true
         );
 
-        // 15. Regression (MC)
         addTopic(
             '15. Simple and multiple regression (MC)',
-            'Simple regression: one predictor. Multiple: several. R² = proportion variance explained. Coefficient β: slope holding others constant. Residual = observed − predicted.',
-            'Example: Simple regression y = β₀ + β₁x. R² = 0.85 means 85% of variance explained. Adjusted R² penalizes for extra predictors.',
+            'Simple regression: one predictor. Multiple: several. \\(R^2\\) = proportion variance explained. Coefficient \\(\\beta\\): slope holding others constant. Residual = observed − predicted.',
+            'Simple regression \\(y = \\beta_0 + \\beta_1 x\\). \\(R^2 = 0.85\\) means 85% of variance explained. Adjusted \\(R^2\\) penalizes for extra predictors.',
             [
-                'In simple regression, R² measures (a) correlation (b) proportion variance explained (c) slope',
-                'Multiple regression: β₁ represents (a) intercept (b) slope with other predictors fixed (c) correlation',
+                'In simple regression, \\(R^2\\) measures (a) correlation (b) proportion variance explained (c) slope',
+                'Multiple regression: \\(\\beta_1\\) represents (a) intercept (b) slope with other predictors fixed (c) correlation',
                 'Residual = (a) observed − predicted (b) predicted − observed (c) observed / predicted',
-                'Adjusted R² is used when (a) adding predictors (b) removing outliers (c) transforming data',
-                'p-value for coefficient tests H0: β=0. p<0.05 → (a) significant (b) not significant'
+                'Adjusted \\(R^2\\) is used when (a) adding predictors (b) removing outliers (c) transforming data',
+                'p-value for coefficient tests \\(H_0: \\beta=0\\). p<0.05 → (a) significant (b) not significant'
             ],
             [
                 'Answer: (b) proportion variance explained',
@@ -689,29 +699,28 @@
             true
         );
 
-        // 16. Control charts (MC)
+        // Topic 16: Use Unicode x̄ directly in the title
         addTopic(
             '16. Control charts (x̄, R, p) (MC)',
-            'x̄ chart monitors process mean. R chart monitors variability. p chart monitors proportion defective. Control limits at ±3σ. Points outside limits indicate special cause variation.',
-            'Example: x̄ chart with CL = 10, UCL = 12, LCL = 8. A point at 13 signals special cause.',
+            '\\(\\bar{x}\\) chart monitors process mean. R chart monitors variability. p chart monitors proportion defective. Control limits at \\(\\pm 3\\sigma\\). Points outside limits indicate special cause variation.',
+            '\\(\\bar{x}\\) chart with CL = 10, UCL = 12, LCL = 8. A point at 13 signals special cause.',
             [
-                'x̄ chart monitors (a) variability (b) central tendency (c) proportion',
+                '\\(\\bar{x}\\) chart monitors (a) variability (b) central tendency (c) proportion',
                 'R chart monitors (a) mean (b) range (c) fraction defective',
                 'p chart is for (a) continuous data (b) attribute/proportion data (c) individual measurements',
-                'Control limits typically set at (a) ±1σ (b) ±2σ (c) ±3σ',
+                'Control limits typically set at (a) \\(\\pm 1\\sigma\\) (b) \\(\\pm 2\\sigma\\) (c) \\(\\pm 3\\sigma\\)',
                 'Point outside limits indicates (a) common cause (b) special cause (c) no action'
             ],
             [
                 'Answer: (b) central tendency',
                 'Answer: (b) range',
                 'Answer: (b) attribute/proportion data',
-                'Answer: (c) ±3σ',
+                'Answer: (c) \\(\\pm 3\\sigma\\)',
                 'Answer: (b) special cause'
             ],
             true
         );
 
-        // ----- DOM refs -------------------------------------------------
         const selectEl = document.getElementById('topicSelect');
         const passwordInput = document.getElementById('passwordInput');
         const unlockBtn = document.getElementById('unlockBtn');
@@ -723,20 +732,30 @@
         const lockIcon = document.getElementById('lockIcon');
         const lockStatusBadge = document.getElementById('lockStatusBadge');
 
-        // populate dropdown
+        // Populate dropdown - use innerHTML for topic 16 to show x̄ properly
         TOPICS.forEach((t, idx) => {
             const opt = document.createElement('option');
             opt.value = idx;
-            opt.textContent = t.title;
+            if (idx === 15) {
+                // Use Unicode x̄ with combining macron
+                opt.innerHTML = '16. Control charts (x̄, R, p) (MC)';
+            } else {
+                opt.textContent = t.title;
+            }
             selectEl.appendChild(opt);
         });
 
-        // ----- State ----------------------------------------------------
         const unlocked = new Set();
         let passwords = {};
         let passwordsLoaded = false;
 
-        // ----- Load passwords from Google Sheets ------------------------
+        // Function to render math with MathJax
+        function renderMathWithMathJax() {
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([reviewContent, problemsContainer]).catch(() => {});
+            }
+        }
+
         async function loadPasswords() {
             try {
                 statusMsg.textContent = '⏳ Loading...';
@@ -750,7 +769,7 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                //logDebug('📦 Data received:', data);
+               // logDebug('📦 Data received:', data);
                 
                 if (data.error) {
                     throw new Error(data.error);
@@ -758,8 +777,6 @@
                 
                 passwords = data;
                 passwordsLoaded = true;
-                //logDebug('✅ Passwords loaded successfully');
-                //logDebug('📋 Available topics:', Object.keys(passwords).join(', '));
                 
                 statusMsg.textContent = '🔒 locked (ready)';
                 statusMsg.className = 'status-msg';
@@ -777,13 +794,17 @@
             }
         }
 
-        // ----- render functions -----------------------------------------
         function renderTopic(index, showProblems = false) {
             const topic = TOPICS[index];
             if (!topic) return;
 
             const isUnlocked = unlocked.has(index);
-            topicBadge.textContent = `topic ${index+1}`;
+            // Update badge
+            if (index === 15) {
+                topicBadge.innerHTML = 'topic 16: x̄ chart';
+            } else {
+                topicBadge.textContent = `topic ${index+1}`;
+            }
             lockIcon.textContent = isUnlocked ? '🔓' : '🔒';
             lockStatusBadge.textContent = isUnlocked ? 'unlocked' : 'locked';
             lockStatusBadge.style.background = isUnlocked ? '#dcfce7' : '#e2e8f0';
@@ -840,9 +861,11 @@
                     problemCount.textContent = '0';
                 }
             }
+            
+            // Render math with MathJax after a short delay
+            setTimeout(renderMathWithMathJax, 200);
         }
 
-        // ----- toggle solution (global function) ------------------------
         window.toggleSolution = function(id) {
             const el = document.getElementById(id);
             if (el) {
@@ -853,10 +876,11 @@
                     btn.textContent = isShowing ? '💡 Show Solution' : '🙈 Hide Solution';
                     btn.classList.toggle('active');
                 }
+                // Re-render math when solution is shown
+                setTimeout(renderMathWithMathJax, 100);
             }
         };
 
-        // ----- unlock logic --------------------------------------------
         function attemptUnlock() {
             const idx = parseInt(selectEl.value, 10);
             if (isNaN(idx) || idx < 0 || idx >= TOPICS.length) {
@@ -903,7 +927,6 @@
             }
         }
 
-        // ----- event listeners -----------------------------------------
         unlockBtn.addEventListener('click', attemptUnlock);
 
         selectEl.addEventListener('change', function() {
@@ -929,20 +952,14 @@
             }
         });
 
-        // ----- Initialize -----------------------------------------------
         loadPasswords();
         selectEl.value = 0;
         renderTopic(0, false);
         statusMsg.textContent = '🔒 locked';
         statusMsg.className = 'status-msg';
-
-        console.log('🔐 Topic-specific passwords stored in Google Sheets');
-        console.log(`📡 Web App URL: ${WEB_APP_URL}`);
-        console.log('✅ No passwords are hardcoded in this HTML file.');
-        console.log('💡 Each topic has its own password in the Google Sheet!');
-        console.log('📌 Topic 1, Question 5 demonstrates equally likely outcomes with replacement.');
-        console.log('⚠️ If equally likely outcomes are not assumed, the sample space becomes ambiguous.');
-        console.log('💡 Solutions are hidden by default. Click "Show Solution" to reveal each answer.');
+        
+        // Initial render of math
+        setTimeout(renderMathWithMathJax, 500);
     })();
 </script>
 </body>
