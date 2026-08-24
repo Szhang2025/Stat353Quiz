@@ -750,7 +750,7 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                logDebug('📦 Data received:', data);
+                //logDebug('📦 Data received:', data);
                 
                 if (data.error) {
                     throw new Error(data.error);
