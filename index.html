@@ -744,7 +744,7 @@
                 logDebug('⏳ Fetching passwords from Google Sheets...');
                 
                 const response = await fetch(WEB_APP_URL);
-                logDebug('📡 Response status:', response.status);
+                //logDebug('📡 Response status:', response.status);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
