@@ -396,17 +396,23 @@
             TOPICS.push({ title, review: cleanReview, example: exampleText, problems, solutions, mc });
         }
 
-        // Use Unicode x̄ directly for topic 16 title
+        // ---------------------------------------------------------------------
+        // NOTE ON ESCAPING:
+        // Any "<" or ">" that is meant as a mathematical relation MUST be written
+        // as &lt; / &gt; inside these HTML strings. Otherwise the browser parses
+        // them as tag delimiters and swallows the following question(s).
+        // ---------------------------------------------------------------------
+
         addTopic(
             '1. Experiment, sample space, event, multiplicative counting',
             'An experiment is any procedure with observable outcomes. The sample space (S) is the set of all possible outcomes. An event is a subset of S. The multiplicative counting principle: if an operation has \\(m\\) outcomes and a second has \\(n\\), the total is \\(m \\times n\\).<br><br><div class="important-box"><strong>⚠️ IMPORTANT:</strong> If equally likely outcomes are NOT assumed, then there will be ambiguity regarding the sample space. Different probability models could assign different probabilities to the same outcomes. The formula \\(P(A) = |A|/|S|\\) ONLY works when all outcomes in S are equally likely.</div>',
             'Tossing a coin twice → \\(S = \\{HH, HT, TH, TT\\}\\), \\(|S| = 2 \\times 2 = 4\\). Event A = {at least one head} = {HH, HT, TH}. Each outcome is equally likely with probability \\(1/4\\). Therefore, \\(P(A) = 3/4\\).',
             [
-                'Roll a 4-sided die and a 6-sided die. How many outcomes in the sample space?',
-                'A coin is tossed 3 times. How many outcomes?',
-                'Event A = {sum of two dice is 6}. How many outcomes in A?',
-                'A license plate has 2 letters (A-Z) and 3 digits (0-9). How many plates?',
-                'A bag has 5 red marbles and 3 green marbles. You draw two marbles with replacement (put the first marble back before drawing the second). How many outcomes are in the sample space? <br><br><span style="color:#991b1b;font-weight:500;">💡 Key Concept:</span> Each draw has 8 equally likely outcomes, and with replacement, the total number of equally likely outcomes is \\(8 \\times 8 = 64\\). <span style="color:#991b1b;font-weight:500;">Without the equally likely assumption, the sample space would be ambiguous.</span>'
+                'You roll a 4-sided die and a 6-sided die. How many outcomes are in the sample space?',
+                'A coin is tossed 3 times. How many outcomes are in the sample space?',
+                'Event A is the event that the sum of two dice is 6. How many outcomes belong to A?',
+                'A license plate has 2 letters (A–Z) followed by 3 digits (0–9). How many different license plates are possible?',
+                'A bag contains 5 red marbles and 3 green marbles. You draw two marbles with replacement (you put the first marble back before drawing the second). How many outcomes are in the sample space? <br><br><span style="color:#991b1b;font-weight:500;">💡 Key Concept:</span> Each draw has 8 equally likely outcomes, and with replacement, the total number of equally likely outcomes is \\(8 \\times 8 = 64\\). <span style="color:#991b1b;font-weight:500;">Without the equally likely assumption, the sample space would be ambiguous.</span>'
             ],
             [
                 '\\(4 \\times 6 = 24\\) outcomes',
@@ -422,18 +428,18 @@
             '\\(P(A) = |A| / |S|\\). Addition rule: \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\). Complement rule: \\(P(A^c) = 1 - P(A)\\).<br><br><div class="important-box"><strong>⚠️ CRITICAL:</strong> The formula \\(P(A) = |A|/|S|\\) is ONLY valid when the sample space consists of equally likely outcomes. If the outcomes are not equally likely, the sample space alone does not determine probabilities, leading to ambiguity.</div>',
             'Roll two dice. S has 36 equally likely outcomes. A = {sum = 7} has 6 outcomes → \\(P(A) = 6/36 = 1/6\\).',
             [
-                'Two dice are rolled. What is \\(P(\\text{sum} = 7)\\)?',
-                'Draw a card from a deck. \\(P(\\text{heart or face card})\\)? (face = J,Q,K)',
-                '\\(P(A)=0.5, P(B)=0.4, P(A \\cap B)=0.2\\). Find \\(P(A \\cup B)\\).',
-                'Roll a die: \\(P(\\text{prime number})\\) ?',
-                'From a deck, \\(P(\\text{red and ace})\\) ?'
+                'Two dice are rolled. What is the probability that the sum is 7?',
+                'A single card is drawn from a standard 52-card deck. What is the probability that it is a heart or a face card (J, Q, K)?',
+                'Suppose that \\(P(A)=0.5\\), \\(P(B)=0.4\\), and \\(P(A \\cap B)=0.2\\). Find \\(P(A \\cup B)\\).',
+                'A fair six-sided die is rolled. What is the probability that the result is a prime number?',
+                'A single card is drawn from a standard deck. What is the probability that it is both red and an ace?'
             ],
             [
                 '\\(6/36 = 1/6 \\approx 0.1667\\)',
-                '\\(P(\\text{heart}) = 13/52, P(\\text{face}) = 12/52, P(\\text{heart} \\cap \\text{face}) = 3/52 \\rightarrow (13+12-3)/52 = 22/52 = 11/26\\)',
+                '\\(P(\\text{heart}) = 13/52\\), \\(P(\\text{face}) = 12/52\\), \\(P(\\text{heart} \\cap \\text{face}) = 3/52\\), so the answer is \\((13+12-3)/52 = 22/52 = 11/26\\).',
                 '\\(0.5 + 0.4 - 0.2 = 0.7\\)',
-                'Prime numbers: 2,3,5 → \\(3/6 = 1/2\\)',
-                '2 red aces (A♥, A♦) → \\(2/52 = 1/26\\)'
+                'The prime numbers are 2, 3 and 5, so \\(P(\\text{prime}) = 3/6 = 1/2\\).',
+                'There are 2 red aces (A♥ and A♦), so \\(P(\\text{red and ace}) = 2/52 = 1/26\\).'
             ]
         );
 
@@ -442,18 +448,18 @@
             'Disjoint (mutually exclusive) events have no common outcomes: \\(P(A \\cap B)=0\\). Independent events: \\(P(A \\cap B)=P(A)P(B)\\). If disjoint and both have positive probability, they cannot be independent.',
             'Roll a die. A={1,2}, B={3,4} are disjoint. \\(P(A)=1/3, P(B)=1/3, P(A \\cap B)=0\\). Independent? No, because \\(0 \\neq 1/9\\).',
             [
-                '\\(P(A)=0.3, P(B)=0.5\\), disjoint. \\(P(A \\cup B)\\) ?',
-                '\\(P(A)=0.4, P(B)=0.2\\), independent. \\(P(A \\cap B)\\)?',
-                'If independent, \\(P(A|B) = P(A)\\). Given \\(P(A)=0.7, P(B)=0.3\\), find \\(P(A|B)\\).',
-                'Can two disjoint events be independent? (yes/no)',
-                '\\(P(A)=0.2, P(B)=0.4, P(A \\cap B)=0.08\\). Are they independent?'
+                'Suppose that \\(P(A)=0.3\\) and \\(P(B)=0.5\\), and that A and B are disjoint. Find \\(P(A \\cup B)\\).',
+                'Suppose that \\(P(A)=0.4\\) and \\(P(B)=0.2\\), and that A and B are independent. Find \\(P(A \\cap B)\\).',
+                'If A and B are independent then \\(P(A|B) = P(A)\\). Given \\(P(A)=0.7\\) and \\(P(B)=0.3\\), find \\(P(A|B)\\).',
+                'Can two disjoint events ever be independent? Answer yes or no.',
+                'Suppose that \\(P(A)=0.2\\), \\(P(B)=0.4\\), and \\(P(A \\cap B)=0.08\\). Are A and B independent?'
             ],
             [
                 '\\(0.3 + 0.5 = 0.8\\)',
                 '\\(0.4 \\times 0.2 = 0.08\\)',
                 '\\(P(A|B) = P(A) = 0.7\\)',
-                'No (unless one has probability 0)',
-                'Yes: \\(0.2 \\times 0.4 = 0.08\\) ✓'
+                'No (unless one of the events has probability 0)',
+                'Yes, because \\(0.2 \\times 0.4 = 0.08\\) ✓'
             ]
         );
 
@@ -462,18 +468,18 @@
             'Total probability: \\(P(A) = \\sum P(A|B_i)P(B_i)\\). Bayes: \\(P(B_i|A) = \\frac{P(A|B_i)P(B_i)}{P(A)}\\). Used when we have a partition of the sample space.',
             'Two machines produce 40% and 60% of items. Defect rates 2% and 5%. \\(P(\\text{defect}) = 0.4 \\times 0.02 + 0.6 \\times 0.05 = 0.038\\).',
             [
-                '\\(P(A|B_1)=0.4, P(A|B_2)=0.7, P(B_1)=0.6, P(B_2)=0.4\\). Find \\(P(A)\\).',
-                'Two machines: M1 makes 40% with 3% defect, M2 makes 60% with 5% defect. Overall defect rate?',
-                'Bayes: \\(P(B_1)=0.3, P(A|B_1)=0.9, P(A|B_2)=0.2, P(B_2)=0.7\\). Find \\(P(B_1|A)\\).',
-                'Test sensitivity 95%, specificity 90%, prevalence 2%. \\(P(\\text{disease} | \\text{positive})\\)?',
-                'Urn1: 2R,3B; Urn2: 4R,1B. Pick urn at random, draw R. \\(P(\\text{Urn1} | R)\\)?'
+                'Suppose that \\(P(A|B_1)=0.4\\), \\(P(A|B_2)=0.7\\), \\(P(B_1)=0.6\\), and \\(P(B_2)=0.4\\). Find \\(P(A)\\).',
+                'Two machines produce items: M1 makes 40% of them with a 3% defect rate, and M2 makes 60% of them with a 5% defect rate. What is the overall defect rate?',
+                'Use Bayes\' rule with \\(P(B_1)=0.3\\), \\(P(A|B_1)=0.9\\), \\(P(A|B_2)=0.2\\), and \\(P(B_2)=0.7\\). Find \\(P(B_1|A)\\).',
+                'A test has sensitivity 95% and specificity 90%, and the disease prevalence is 2%. What is the probability that a person who tests positive actually has the disease?',
+                'Urn 1 contains 2 red and 3 blue balls, while Urn 2 contains 4 red and 1 blue ball. An urn is chosen at random and a ball is drawn; the ball is red. What is the probability that it came from Urn 1?'
             ],
             [
                 '\\(0.4 \\times 0.6 + 0.7 \\times 0.4 = 0.24 + 0.28 = 0.52\\)',
-                '\\(0.4 \\times 0.03 + 0.6 \\times 0.05 = 0.012 + 0.03 = 0.042 = 4.2%\\)',
-                '\\(P(A) = 0.9 \\times 0.3 + 0.2 \\times 0.7 = 0.27 + 0.14 = 0.41 \\rightarrow 0.27/0.41 \\approx 0.6585\\)',
+                '\\(0.4 \\times 0.03 + 0.6 \\times 0.05 = 0.012 + 0.03 = 0.042 = 4.2\\%\\)',
+                '\\(P(A) = 0.9 \\times 0.3 + 0.2 \\times 0.7 = 0.27 + 0.14 = 0.41\\), so \\(P(B_1|A) = 0.27/0.41 \\approx 0.6585\\)',
                 '\\(P(\\text{disease}|+) = \\frac{0.95 \\times 0.02}{0.95 \\times 0.02 + 0.10 \\times 0.98} = 0.019/0.117 \\approx 0.1624\\)',
-                '\\(P(R) = 0.5 \\times 0.4 + 0.5 \\times 0.8 = 0.2 + 0.4 = 0.6 \\rightarrow P(\\text{Urn1}|R) = 0.2/0.6 = 1/3\\)'
+                '\\(P(R) = 0.5 \\times 0.4 + 0.5 \\times 0.8 = 0.2 + 0.4 = 0.6\\), so \\(P(\\text{Urn1}|R) = 0.2/0.6 = 1/3\\)'
             ]
         );
 
@@ -482,11 +488,11 @@
             'PMF: \\(P(X=x)\\). \\(E[X] = \\sum x p(x)\\). \\(\\text{Var}(X) = E[X^2] - \\mu^2\\). Binomial: \\(P(X=k) = \\binom{n}{k} p^k (1-p)^{n-k}\\). Geometric: \\(P(X=k) = (1-p)^{k-1}p\\). Poisson: \\(P(X=k) = e^{-\\lambda} \\lambda^k / k!\\).',
             'Binomial(\\(n=10, p=0.3\\)). \\(P(X=3) = \\binom{10}{3}(0.3)^3(0.7)^7\\). \\(E[X] = np = 3\\).',
             [
-                'X: P(1)=0.1, P(2)=0.4, P(3)=0.5. Find \\(E[X]\\).',
-                'From above, find \\(\\text{Var}(X)\\).',
-                'Binomial(\\(n=8, p=0.4\\)): \\(P(X=3)\\) (formula)',
-                'Geometric(\\(p=0.3\\)): \\(P(\\text{first success on 5th trial})\\) ?',
-                'Poisson(\\(\\lambda=3\\)): \\(P(X=2)\\) ?'
+                'A discrete random variable X has \\(P(1)=0.1\\), \\(P(2)=0.4\\), and \\(P(3)=0.5\\). Find \\(E[X]\\).',
+                'For the random variable above, find \\(\\text{Var}(X)\\).',
+                'If X follows a Binomial distribution with \\(n=8\\) and \\(p=0.4\\), write the expression for \\(P(X=3)\\).',
+                'If X follows a Geometric distribution with \\(p=0.3\\), what is the probability that the first success occurs on the 5th trial?',
+                'If X follows a Poisson distribution with \\(\\lambda=3\\), find \\(P(X=2)\\).'
             ],
             [
                 '\\(E[X] = 1 \\times 0.1 + 2 \\times 0.4 + 3 \\times 0.5 = 0.1 + 0.8 + 1.5 = 2.4\\)',
@@ -502,18 +508,18 @@
             'Uniform(\\(a,b\\)): \\(f(x) = 1/(b-a)\\), mean \\(= (a+b)/2\\), var \\(= (b-a)^2/12\\). Exponential(\\(\\lambda\\)): \\(f(x) = \\lambda e^{-\\lambda x}\\), mean \\(= 1/\\lambda\\), sd \\(= 1/\\lambda\\). Normal(\\(\\mu,\\sigma\\)): symmetric bell curve; 68% within \\(\\pm 1\\sigma\\).',
             'Uniform(0,10): \\(P(X<3) = 3/10 = 0.3\\). Mean = 5, variance = 100/12 ≈ 8.33.',
             [
-                'Uniform(0,12): \\(P(X<4)\\) ?',
-                'Uniform(0,20): mean and variance?',
-                'Exponential(\\(\\lambda=3\\)): \\(P(X>2)\\) ?',
-                'Normal(\\(\\mu=100, \\sigma=15\\)): \\(P(85<X<115)\\) approx? (68%)',
-                'Exponential(\\(\\lambda=0.4\\)): mean and sd?'
+                'If X is Uniform(0, 12), find \\(P(X &lt; 4)\\).',
+                'If X is Uniform(0, 20), what are its mean and variance?',
+                'If X is Exponential with \\(\\lambda=3\\), find \\(P(X &gt; 2)\\).',
+                'If X is Normal with \\(\\mu=100\\) and \\(\\sigma=15\\), what is \\(P(85 &lt; X &lt; 115)\\) approximately?',
+                'If X is Exponential with \\(\\lambda=0.4\\), what are its mean and standard deviation?'
             ],
             [
                 '\\(4/12 = 1/3 \\approx 0.333\\)',
-                'Mean = 10, Variance = 400/12 ≈ 33.33',
-                '\\(P(X>2) = e^{-6} \\approx 0.00248\\)',
-                '\\(P(\\mu-\\sigma < X < \\mu+\\sigma) \\approx 0.68 = 68%\\)',
-                'Mean = \\(1/0.4 = 2.5\\), SD = 2.5'
+                'Mean \\(= 10\\) and variance \\(= 400/12 \\approx 33.33\\)',
+                '\\(P(X &gt; 2) = e^{-6} \\approx 0.00248\\)',
+                '\\(P(\\mu-\\sigma &lt; X &lt; \\mu+\\sigma) \\approx 0.68 = 68\\%\\)',
+                'Mean \\(= 1/0.4 = 2.5\\) and SD \\(= 2.5\\)'
             ]
         );
 
@@ -522,11 +528,11 @@
             'Joint PMF \\(P(X=x, Y=y)\\). Marginal: \\(P(X=x) = \\sum_y P(x,y)\\). \\(\\text{Cov}(X,Y) = E[XY] - E[X]E[Y]\\). Correlation \\(\\rho = \\frac{\\text{Cov}}{\\sigma_x \\sigma_y}\\). Independent → covariance = 0.',
             'Joint \\(P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4\\). Marginal \\(P(X=1) = 0.2+0.1 = 0.3\\).',
             [
-                'Joint: P(1,1)=0.2, P(1,2)=0.1, P(2,1)=0.3, P(2,2)=0.4. Marginal \\(P(X=1)\\)?',
-                'From above, find \\(E[X]\\).',
-                'Covariance formula involves \\(E[XY]\\) and ____.',
-                'Correlation coefficient is between -1 and ____.',
-                'If X,Y independent, covariance = ____.'
+                'Given the joint distribution \\(P(1,1)=0.2\\), \\(P(1,2)=0.1\\), \\(P(2,1)=0.3\\), and \\(P(2,2)=0.4\\), find the marginal probability \\(P(X=1)\\).',
+                'Using the same joint distribution, find \\(E[X]\\).',
+                'The covariance formula involves \\(E[XY]\\) and which other quantity?',
+                'The correlation coefficient always lies between \\(-1\\) and what value?',
+                'If X and Y are independent, what is their covariance equal to?'
             ],
             [
                 '\\(P(X=1) = 0.2 + 0.1 = 0.3\\)',
@@ -542,18 +548,18 @@
             'Population: entire group. Sample: subset. Parameter: numerical summary of population. Statistic: summary of sample. Unbiased: \\(E[\\text{statistic}] = \\text{parameter}\\). 5-number: min, Q1, median, Q3, max. Bar/pie for categorical; histogram/boxplot for quantitative; scatterplot for bivariate.',
             'Sample mean \\(\\bar{x}\\) is a statistic; population mean \\(\\mu\\) is a parameter. A boxplot shows the 5-number summary visually.',
             [
-                'Sample mean is a _____ (parameter/statistic)',
-                'An estimator is unbiased if its expected value equals the _____.',
-                '5-number summary includes: min, Q1, median, Q3, and _____.',
-                'Which plot is best for showing relationship between two continuous variables?',
-                'A boxplot displays the median and the _____.'
+                'Is the sample mean a parameter or a statistic?',
+                'An estimator is unbiased if its expected value equals which quantity?',
+                'The five-number summary consists of the minimum, Q1, the median, Q3, and what else?',
+                'Which type of plot is best for showing the relationship between two continuous variables?',
+                'A boxplot displays the median and which other summary measures?'
             ],
             [
                 'statistic',
-                'parameter (population value)',
-                'max',
-                'scatterplot',
-                'interquartile range (IQR) or quartiles'
+                'the parameter (the population value)',
+                'the maximum',
+                'a scatterplot',
+                'the quartiles (and therefore the interquartile range, IQR)'
             ]
         );
 
@@ -562,17 +568,17 @@
             'CI for \\(p\\): \\(\\hat{p} \\pm z^* \\sqrt{\\hat{p}(1-\\hat{p})/n}\\). Test: \\(z = \\frac{\\hat{p} - p_0}{\\sqrt{p_0(1-p_0)/n}}\\). Sample size condition: \\(n\\hat{p} \\ge 10\\) and \\(n(1-\\hat{p}) \\ge 10\\).',
             '\\(n=100, x=40, \\hat{p}=0.4\\). 95% CI: \\(0.4 \\pm 1.96\\sqrt{0.4 \\times 0.6/100} = (0.304, 0.496)\\).',
             [
-                '\\(n=150, x=60\\), 95% CI for \\(p\\) (\\(z=1.96\\) approx)',
-                '\\(H_0: p=0.4\\) vs \\(H_a: p>0.4, n=200, x=100\\). z-stat?',
-                'Increasing n makes the CI ____ (narrower/wider).',
-                '\\(\\hat{p}=0.7, n=100\\), standard error?',
-                'A 99% CI is wider than 95% CI: true/false?'
+                'In a sample of \\(n=150\\) there are \\(x=60\\) successes. Construct a 95% confidence interval for \\(p\\) using \\(z=1.96\\).',
+                'Test \\(H_0: p=0.4\\) against \\(H_a: p &gt; 0.4\\) with \\(n=200\\) and \\(x=100\\). Compute the z-statistic.',
+                'Does increasing the sample size make the confidence interval narrower or wider?',
+                'If \\(\\hat{p}=0.7\\) and \\(n=100\\), what is the standard error?',
+                'True or false: a 99% confidence interval is wider than a 95% confidence interval.'
             ],
             [
-                '\\(\\hat{p} = 60/150 = 0.4\\), SE = \\(\\sqrt{0.4 \\times 0.6/150} = 0.04\\), CI = \\(0.4 \\pm 1.96 \\times 0.04 = (0.322, 0.478)\\)',
-                '\\(\\hat{p} = 100/200 = 0.5\\), \\(z = (0.5 - 0.4)/\\sqrt{0.4 \\times 0.6/200} = 0.1/0.0346 \\approx 2.89\\)',
+                '\\(\\hat{p} = 60/150 = 0.4\\), SE \\(= \\sqrt{0.4 \\times 0.6/150} = 0.04\\), CI \\(= 0.4 \\pm 1.96 \\times 0.04 = (0.322, 0.478)\\)',
+                '\\(\\hat{p} = 100/200 = 0.5\\), so \\(z = (0.5 - 0.4)/\\sqrt{0.4 \\times 0.6/200} = 0.1/0.0346 \\approx 2.89\\)',
                 'narrower',
-                'SE = \\(\\sqrt{0.7 \\times 0.3/100} = \\sqrt{0.0021} \\approx 0.0458\\)',
+                'SE \\(= \\sqrt{0.7 \\times 0.3/100} = \\sqrt{0.0021} \\approx 0.0458\\)',
                 'true'
             ]
         );
@@ -582,18 +588,18 @@
             'CI for \\(p_1-p_2\\): \\((\\hat{p}_1-\\hat{p}_2) \\pm z \\sqrt{\\hat{p}_1(1-\\hat{p}_1)/n_1 + \\hat{p}_2(1-\\hat{p}_2)/n_2}\\). Test uses pooled proportion \\(\\hat{p} = (x_1+x_2)/(n_1+n_2)\\).',
             '\\(\\hat{p}_1=0.6, n_1=100, \\hat{p}_2=0.5, n_2=100\\). SE = \\(\\sqrt{0.6 \\times 0.4/100 + 0.5 \\times 0.5/100} = 0.0707\\).',
             [
-                '\\(\\hat{p}_1=0.6, n_1=120, \\hat{p}_2=0.5, n_2=120\\). SE for difference?',
-                'In hypothesis test for difference, we use _____ proportion.',
-                'If CI for difference contains 0, we conclude ______.',
-                'Condition: \\(n_1\\hat{p}_1, n_1(1-\\hat{p}_1), n_2\\hat{p}_2, n_2(1-\\hat{p}_2)\\) all ≥ ____.',
-                '\\(p_1=0.55, p_2=0.45, n_1=n_2=100\\). approximate z-stat?'
+                'Given \\(\\hat{p}_1=0.6\\) with \\(n_1=120\\) and \\(\\hat{p}_2=0.5\\) with \\(n_2=120\\), compute the standard error for the difference.',
+                'In a hypothesis test for the difference between two proportions, which type of proportion do we use?',
+                'If the confidence interval for the difference contains 0, what do we conclude?',
+                'What is the minimum required value for each of \\(n_1\\hat{p}_1\\), \\(n_1(1-\\hat{p}_1)\\), \\(n_2\\hat{p}_2\\), and \\(n_2(1-\\hat{p}_2)\\)?',
+                'If \\(\\hat{p}_1=0.55\\), \\(\\hat{p}_2=0.45\\), and \\(n_1=n_2=100\\), compute the approximate z-statistic.'
             ],
             [
-                'SE = \\(\\sqrt{0.6 \\times 0.4/120 + 0.5 \\times 0.5/120} = \\sqrt{0.002 + 0.00208} = \\sqrt{0.00408} \\approx 0.0639\\)',
-                'pooled',
-                'no significant difference',
-                '5 or 10 (usually 5)',
-                '\\(\\hat{p} = (55+45)/200 = 0.5\\), \\(z = (0.55-0.45)/\\sqrt{0.5 \\times 0.5 \\times 2/100} = 0.1/0.0707 \\approx 1.414\\)'
+                'SE \\(= \\sqrt{0.6 \\times 0.4/120 + 0.5 \\times 0.5/120} = \\sqrt{0.002 + 0.00208} = \\sqrt{0.00408} \\approx 0.0639\\)',
+                'the pooled proportion',
+                'that there is no significant difference between the two proportions',
+                'at least 5 (some textbooks use 10)',
+                '\\(\\hat{p} = (55+45)/200 = 0.5\\), so \\(z = (0.55-0.45)/\\sqrt{0.5 \\times 0.5 \\times 2/100} = 0.1/0.0707 \\approx 1.414\\)'
             ]
         );
 
@@ -602,15 +608,15 @@
             'CI: \\(\\bar{x} \\pm t^* \\frac{s}{\\sqrt{n}}\\) (or \\(z\\) if \\(\\sigma\\) known). Test: \\(t = \\frac{\\bar{x} - \\mu_0}{s/\\sqrt{n}}\\). Use t-distribution with df = n−1 when \\(\\sigma\\) unknown.',
             '\\(\\bar{x}=50, s=10, n=25\\). 95% CI: \\(50 \\pm 2.064 \\times 10/5 = (45.87, 54.13)\\).',
             [
-                '\\(\\bar{x}=42, s=8, n=25\\), 95% CI (use \\(t_{0.025} \\approx 2.064\\))',
-                'When \\(\\sigma\\) unknown, use _____ distribution.',
-                '\\(H_0: \\mu=50, H_a: \\mu \\neq 50, \\bar{x}=53, s=10, n=30\\). t-stat?',
-                '90% CI is narrower than 95% CI: true/false?',
-                'For large n, t and z are approximately equal: true?'
+                'Given \\(\\bar{x}=42\\), \\(s=8\\), and \\(n=25\\), construct a 95% confidence interval using \\(t_{0.025} \\approx 2.064\\).',
+                'When \\(\\sigma\\) is unknown, which distribution should be used?',
+                'Test \\(H_0: \\mu=50\\) against \\(H_a: \\mu \\neq 50\\) with \\(\\bar{x}=53\\), \\(s=10\\), and \\(n=30\\). Compute the t-statistic.',
+                'True or false: a 90% confidence interval is narrower than a 95% confidence interval.',
+                'True or false: for large n, the t and z distributions are approximately equal.'
             ],
             [
-                'SE = \\(8/\\sqrt{25} = 1.6\\), CI = \\(42 \\pm 2.064 \\times 1.6 = (38.70, 45.30)\\)',
-                't',
+                'SE \\(= 8/\\sqrt{25} = 1.6\\), CI \\(= 42 \\pm 2.064 \\times 1.6 = (38.70, 45.30)\\)',
+                'the t-distribution',
                 '\\(t = (53-50)/(10/\\sqrt{30}) = 3/1.826 = 1.643\\)',
                 'true',
                 'true'
@@ -622,16 +628,16 @@
             'Two-sample t: \\((\\bar{x}_1-\\bar{x}_2) \\pm t^* \\sqrt{s_1^2/n_1 + s_2^2/n_2}\\). Pooled when variances equal. Paired t-test for dependent samples.',
             '\\(\\bar{x}_1=30, s_1=5, n_1=25; \\bar{x}_2=28, s_2=6, n_2=25\\). SE = \\(\\sqrt{25/25 + 36/25} = \\sqrt{2.44} = 1.56\\).',
             [
-                '\\(\\bar{x}_1=30, s_1=5, n_1=25; \\bar{x}_2=28, s_2=6, n_2=25\\). SE difference?',
-                'Pooled variance is used when we assume ____ variances.',
-                'Paired t-test is used for ____ samples.',
-                'If p-value < 0.05 for \\(H_0: \\mu_1=\\mu_2\\), we reject H0: true/false?',
-                'CI for \\(\\mu_1-\\mu_2\\) includes 0 → no significant difference. True?'
+                'Given \\(\\bar{x}_1=30\\), \\(s_1=5\\), \\(n_1=25\\) and \\(\\bar{x}_2=28\\), \\(s_2=6\\), \\(n_2=25\\), compute the standard error of the difference.',
+                'Pooled variance is used when we assume what about the two variances?',
+                'A paired t-test is used for which type of samples?',
+                'True or false: if the p-value is less than 0.05 for \\(H_0: \\mu_1=\\mu_2\\), we reject \\(H_0\\).',
+                'True or false: if the confidence interval for \\(\\mu_1-\\mu_2\\) includes 0, there is no significant difference.'
             ],
             [
-                'SE = \\(\\sqrt{25/25 + 36/25} = \\sqrt{1 + 1.44} = \\sqrt{2.44} \\approx 1.562\\)',
-                'equal',
-                'dependent/paired',
+                'SE \\(= \\sqrt{25/25 + 36/25} = \\sqrt{1 + 1.44} = \\sqrt{2.44} \\approx 1.562\\)',
+                'that the two variances are equal',
+                'dependent (paired) samples',
                 'true',
                 'true'
             ]
@@ -642,18 +648,18 @@
             'GOF: \\(\\sum \\frac{(O-E)^2}{E}\\). df = categories − 1. Independence: df = \\((r-1)(c-1)\\). Expected counts ≥ 5. Large \\(\\chi^2\\) → small p-value → reject \\(H_0\\).',
             'GOF with 4 categories, df=3. Independence test for 2×3 table, df=(2−1)(3−1)=2.',
             [
-                'GOF with 6 categories, df = ?',
-                'Independence test for 4x5 table, df = ?',
-                'Expected count in chi-square should be at least ____.',
-                'Large chi-square stat → small p-value → reject H0: true?',
-                'GOF null hypothesis specifies the ____ distribution.'
+                'In a goodness-of-fit test with 6 categories, what is the degrees of freedom?',
+                'In a chi-square test of independence for a 4×5 table, what is the degrees of freedom?',
+                'What is the minimum expected count required in a chi-square test?',
+                'True or false: a large chi-square statistic produces a small p-value and leads us to reject \\(H_0\\).',
+                'The null hypothesis in a goodness-of-fit test specifies which kind of distribution?'
             ],
             [
                 'df = 5',
                 '\\((4-1)(5-1) = 3 \\times 4 = 12\\)',
                 '5',
                 'true',
-                'expected/probability'
+                'the expected (hypothesized) probability distribution'
             ]
         );
 
@@ -662,18 +668,18 @@
             'ANOVA compares means of 3+ groups. \\(F = \\text{MSB}/\\text{MSW}\\). Assumptions: normality, equal variances, independence. \\(H_0\\): all means equal.',
             '4 groups, each with 10 observations. df numerator = 3, df denominator = 36. \\(F = \\text{MSB}/\\text{MSW}\\).',
             [
-                'ANOVA compares means of (a) 2 groups (b) 3+ groups (c) paired data',
-                'F-statistic = MSB/MSW. MSB measures (a) within-group (b) between-group (c) total',
-                'ANOVA assumptions include (a) normality (b) equal variances (c) both',
-                'If F > critical value, we (a) reject H0 (b) fail to reject',
-                'df numerator in 1-way ANOVA: (a) k−1 (b) n−k (c) n−1'
+                'One-way ANOVA is used to compare the means of: (a) 2 groups, (b) 3 or more groups, (c) paired data.',
+                'The F-statistic equals MSB/MSW, where MSB measures: (a) within-group variation, (b) between-group variation, (c) total variation.',
+                'Which of the following are assumptions of ANOVA? (a) normality, (b) equal variances, (c) both.',
+                'If the F-statistic is greater than the critical value, we: (a) reject \\(H_0\\), (b) fail to reject \\(H_0\\).',
+                'In one-way ANOVA, the numerator degrees of freedom is: (a) \\(k-1\\), (b) \\(n-k\\), (c) \\(n-1\\).'
             ],
             [
-                'Answer: (b) 3+ groups',
-                'Answer: (b) between-group',
+                'Answer: (b) 3 or more groups',
+                'Answer: (b) between-group variation',
                 'Answer: (c) both',
-                'Answer: (a) reject H0',
-                'Answer: (a) k−1'
+                'Answer: (a) reject \\(H_0\\)',
+                'Answer: (a) \\(k-1\\)'
             ],
             true
         );
@@ -683,15 +689,15 @@
             'Simple regression: one predictor. Multiple: several. \\(R^2\\) = proportion variance explained. Coefficient \\(\\beta\\): slope holding others constant. Residual = observed − predicted.',
             'Simple regression \\(y = \\beta_0 + \\beta_1 x\\). \\(R^2 = 0.85\\) means 85% of variance explained. Adjusted \\(R^2\\) penalizes for extra predictors.',
             [
-                'In simple regression, \\(R^2\\) measures (a) correlation (b) proportion variance explained (c) slope',
-                'Multiple regression: \\(\\beta_1\\) represents (a) intercept (b) slope with other predictors fixed (c) correlation',
-                'Residual = (a) observed − predicted (b) predicted − observed (c) observed / predicted',
-                'Adjusted \\(R^2\\) is used when (a) adding predictors (b) removing outliers (c) transforming data',
-                'p-value for coefficient tests \\(H_0: \\beta=0\\). p<0.05 → (a) significant (b) not significant'
+                'In simple regression, \\(R^2\\) measures: (a) the correlation, (b) the proportion of variance explained, (c) the slope.',
+                'In multiple regression, \\(\\beta_1\\) represents: (a) the intercept, (b) the slope with the other predictors held fixed, (c) the correlation.',
+                'A residual is defined as: (a) observed − predicted, (b) predicted − observed, (c) observed / predicted.',
+                'Adjusted \\(R^2\\) is used when: (a) adding predictors, (b) removing outliers, (c) transforming the data.',
+                'The p-value for a coefficient tests \\(H_0: \\beta=0\\). If \\(p &lt; 0.05\\), the coefficient is: (a) significant, (b) not significant.'
             ],
             [
-                'Answer: (b) proportion variance explained',
-                'Answer: (b) slope with other predictors fixed',
+                'Answer: (b) the proportion of variance explained',
+                'Answer: (b) the slope with the other predictors held fixed',
                 'Answer: (a) observed − predicted',
                 'Answer: (a) adding predictors',
                 'Answer: (a) significant'
@@ -705,18 +711,18 @@
             '\\(\\bar{x}\\) chart monitors process mean. R chart monitors variability. p chart monitors proportion defective. Control limits at \\(\\pm 3\\sigma\\). Points outside limits indicate special cause variation.',
             '\\(\\bar{x}\\) chart with CL = 10, UCL = 12, LCL = 8. A point at 13 signals special cause.',
             [
-                '\\(\\bar{x}\\) chart monitors (a) variability (b) central tendency (c) proportion',
-                'R chart monitors (a) mean (b) range (c) fraction defective',
-                'p chart is for (a) continuous data (b) attribute/proportion data (c) individual measurements',
-                'Control limits typically set at (a) \\(\\pm 1\\sigma\\) (b) \\(\\pm 2\\sigma\\) (c) \\(\\pm 3\\sigma\\)',
-                'Point outside limits indicates (a) common cause (b) special cause (c) no action'
+                'An \\(\\bar{x}\\) chart monitors: (a) variability, (b) central tendency, (c) proportion.',
+                'An R chart monitors: (a) the mean, (b) the range, (c) the fraction defective.',
+                'A p chart is used for: (a) continuous data, (b) attribute/proportion data, (c) individual measurements.',
+                'Control limits are typically set at: (a) \\(\\pm 1\\sigma\\), (b) \\(\\pm 2\\sigma\\), (c) \\(\\pm 3\\sigma\\).',
+                'A point outside the control limits indicates: (a) common cause variation, (b) special cause variation, (c) that no action is needed.'
             ],
             [
                 'Answer: (b) central tendency',
-                'Answer: (b) range',
+                'Answer: (b) the range',
                 'Answer: (b) attribute/proportion data',
                 'Answer: (c) \\(\\pm 3\\sigma\\)',
-                'Answer: (b) special cause'
+                'Answer: (b) special cause variation'
             ],
             true
         );
